@@ -207,17 +207,17 @@ tr.flash td{background:var(--accent-soft)}
   <aside id="sidebar">
     <div class="logo">
       <div class="bolt">⚡</div>
-      <div><b>元器件仓库</b><small>Component Warehouse</small></div>
+      <div><b data-i18n="app.name">元器件仓库</b><small data-i18n="app.sub">Component Warehouse</small></div>
     </div>
     <nav class="nav">
-      <button class="nav-btn active" data-view="overview">元器件总览</button>
-      <button class="nav-btn" data-view="stockin">入库管理</button>
-      <button class="nav-btn" data-view="stockout">出库管理</button>
-      <button class="nav-btn" data-view="logs">出入库记录</button>
-      <button class="nav-btn" data-view="bom">BOM 核对</button>
-      <button class="nav-btn" data-view="cats">分类管理</button>
+      <button class="nav-btn active" data-view="overview" data-i18n="nav.overview">元器件总览</button>
+      <button class="nav-btn" data-view="stockin" data-i18n="nav.stockin">入库管理</button>
+      <button class="nav-btn" data-view="stockout" data-i18n="nav.stockout">出库管理</button>
+      <button class="nav-btn" data-view="logs" data-i18n="nav.logs">出入库记录</button>
+      <button class="nav-btn" data-view="bom" data-i18n="nav.bom">BOM 核对</button>
+      <button class="nav-btn" data-view="cats" data-i18n="nav.cats">分类管理</button>
     </nav>
-    <div class="cat-title">元器件分类</div>
+    <div class="cat-title" data-i18n="side.cats">元器件分类</div>
     <div id="catTree"></div>
   </aside>
 
@@ -226,46 +226,47 @@ tr.flash td{background:var(--accent-soft)}
     <div class="topbar">
       <h1 id="pageTitle">元器件总览</h1>
       <div class="spacer"></div>
-      <button class="btn" id="importBtn">导入</button>
-      <button class="btn" id="exportBtn">导出</button>
-      <button class="btn primary" id="addBtn">＋ 新增元器件</button>
+      <button class="btn" id="langBtn">EN</button>
+      <button class="btn" id="importBtn" data-i18n="top.import">导入</button>
+      <button class="btn" id="exportBtn" data-i18n="top.export">导出</button>
+      <button class="btn primary" id="addBtn" data-i18n="top.add">＋ 新增元器件</button>
       <input type="file" id="importFile" accept=".json" hidden>
     </div>
 
     <div class="content">
       <!-- 统计卡片（仅总览页） -->
       <div class="stats" id="statsRow">
-        <div class="stat"><div class="ic" style="background:var(--accent-soft);color:var(--accent)">▦</div><div><div class="num" id="stTypes">0</div><div class="lbl">元器件型号数</div></div></div>
-        <div class="stat"><div class="ic" style="background:var(--green-soft);color:var(--green)">◈</div><div><div class="num" id="stStock">0</div><div class="lbl">库存总数量</div></div></div>
-        <div class="stat"><div class="ic" style="background:rgba(153,102,255,.13);color:#a98bff">¥</div><div><div class="num" id="stValue">¥0</div><div class="lbl">库存总价值</div></div></div>
-        <div class="stat warn"><div class="ic" style="background:var(--amber-soft);color:var(--amber)">⚠</div><div><div class="num" id="stLow">0</div><div class="lbl">低库存预警</div></div></div>
+        <div class="stat"><div class="ic" style="background:var(--accent-soft);color:var(--accent)">▦</div><div><div class="num" id="stTypes">0</div><div class="lbl" data-i18n="stat.types">元器件型号数</div></div></div>
+        <div class="stat"><div class="ic" style="background:var(--green-soft);color:var(--green)">◈</div><div><div class="num" id="stStock">0</div><div class="lbl" data-i18n="stat.stock">库存总数量</div></div></div>
+        <div class="stat"><div class="ic" style="background:rgba(153,102,255,.13);color:#a98bff">¥</div><div><div class="num" id="stValue">¥0</div><div class="lbl" data-i18n="stat.value">库存总价值</div></div></div>
+        <div class="stat warn"><div class="ic" style="background:var(--amber-soft);color:var(--amber)">⚠</div><div><div class="num" id="stLow">0</div><div class="lbl" data-i18n="stat.low">低库存预警</div></div></div>
       </div>
 
       <!-- ===== 页面1：元器件总览 ===== -->
       <div class="panel" id="listPanel">
         <div class="panel-head">
-          <h2>元器件列表</h2>
-          <span class="crumb" id="crumbText">全部元器件</span>
+          <h2 data-i18n="list.title">元器件列表</h2>
+          <span class="crumb" id="crumbText" data-i18n="tree.all">全部元器件</span>
           <div class="spacer" style="flex:1"></div>
-          <div class="search-inline"><input id="searchInput" placeholder="搜索名称 / 型号 / 品牌 / 库位…"></div>
-          <select id="pkgFilter" title="按封装筛选"></select>
+          <div class="search-inline"><input id="searchInput" data-i18n-ph="search.ph" placeholder="搜索名称 / 型号 / 品牌 / 库位…"></div>
+          <select id="pkgFilter" data-i18n-title="pkg.title" title="按封装筛选"></select>
           <select id="sortSelect">
-            <option value="updated">最近更新</option>
-            <option value="stockDesc">库存：多 → 少</option>
-            <option value="stockAsc">库存：少 → 多</option>
-            <option value="name">名称 A → Z</option>
+            <option value="updated" data-i18n="sort.updated">最近更新</option>
+            <option value="stockDesc" data-i18n="sort.stockDesc">库存：多 → 少</option>
+            <option value="stockAsc" data-i18n="sort.stockAsc">库存：少 → 多</option>
+            <option value="name" data-i18n="sort.name">名称 A → Z</option>
           </select>
         </div>
         <div style="overflow-x:auto">
           <table>
             <thead><tr>
-              <th style="width:58px">图片</th><th>元器件</th><th>分类</th><th>封装</th>
-              <th>库存</th><th>库位</th><th>单价</th><th style="width:225px">操作</th>
+              <th style="width:58px" data-i18n="th.photo">图片</th><th data-i18n="th.comp">元器件</th><th data-i18n="th.cat">分类</th><th data-i18n="th.pkg">封装</th>
+              <th data-i18n="th.stock">库存</th><th data-i18n="th.loc">库位</th><th data-i18n="th.price">单价</th><th style="width:225px" data-i18n="th.actions">操作</th>
             </tr></thead>
             <tbody id="compTbody"></tbody>
           </table>
           <div class="empty" id="listEmpty" hidden>
-            <div class="big">▤</div><div>暂无元器件，点击右上角「新增元器件」开始建库</div>
+            <div class="big">▤</div><div data-i18n="list.empty">暂无元器件，点击右上角「新增元器件」开始建库</div>
           </div>
         </div>
       </div>
@@ -276,26 +277,26 @@ tr.flash td{background:var(--accent-soft)}
           <h2 id="stockPanelTitle">入库管理</h2>
           <span class="crumb" id="stockCrumb"></span>
           <div class="spacer" style="flex:1"></div>
-          <div class="search-inline"><input id="siSearch" placeholder="搜索名称 / 型号 / 库位…"></div>
+          <div class="search-inline"><input id="siSearch" data-i18n-ph="stock.search.ph" placeholder="搜索名称 / 型号 / 库位…"></div>
         </div>
         <div class="filter-bar">
-          <span class="fb-label">分类筛选</span>
+          <span class="fb-label" data-i18n="fb.cat">分类筛选</span>
           <select id="siParent"></select>
           <select id="siChild"></select>
-          <span class="fb-label" style="margin-left:8px">封装</span>
+          <span class="fb-label" style="margin-left:8px" data-i18n="fb.pkg">封装</span>
           <select id="siPkg"></select>
           <span class="crumb" id="siHint"></span>
         </div>
         <div style="overflow-x:auto">
           <table>
             <thead><tr>
-              <th style="width:58px">图片</th><th>元器件</th><th>分类</th><th>封装</th><th>当前库存</th><th>库位</th>
-              <th id="qtyTh" style="width:110px">入库数量</th><th style="width:190px">备注</th><th style="width:100px">操作</th>
+              <th style="width:58px" data-i18n="th.photo">图片</th><th data-i18n="th.comp">元器件</th><th data-i18n="th.cat">分类</th><th data-i18n="th.pkg">封装</th><th data-i18n="th.curstock">当前库存</th><th data-i18n="th.loc">库位</th>
+              <th id="qtyTh" style="width:110px">入库数量</th><th style="width:190px" data-i18n="th.note">备注</th><th style="width:100px" data-i18n="th.actions">操作</th>
             </tr></thead>
             <tbody id="stockTbody"></tbody>
           </table>
           <div class="empty" id="stockEmpty" hidden>
-            <div class="big">⌕</div><div id="stockEmptyText">没有匹配的元器件</div>
+            <div class="big">⌕</div><div id="stockEmptyText" data-i18n="stock.empty">没有匹配的元器件</div>
           </div>
         </div>
       </div>
@@ -303,50 +304,50 @@ tr.flash td{background:var(--accent-soft)}
       <!-- ===== 页面4：出入库记录 ===== -->
       <div class="panel" id="logPanel" hidden>
         <div class="panel-head">
-          <h2>出入库流水</h2>
+          <h2 data-i18n="log.title">出入库流水</h2>
           <span class="crumb" id="logCrumb"></span>
           <div class="spacer" style="flex:1"></div>
           <select id="logFilter">
-            <option value="all">全部类型</option>
-            <option value="in">仅入库</option>
-            <option value="out">仅出库</option>
+            <option value="all" data-i18n="log.all">全部类型</option>
+            <option value="in" data-i18n="log.in">仅入库</option>
+            <option value="out" data-i18n="log.out">仅出库</option>
           </select>
         </div>
         <div style="overflow-x:auto">
           <table>
-            <thead><tr><th>时间</th><th>元器件</th><th>类型</th><th>数量</th><th>变动后库存</th><th>备注</th></tr></thead>
+            <thead><tr><th data-i18n="th.time">时间</th><th data-i18n="th.comp">元器件</th><th data-i18n="th.type">类型</th><th data-i18n="th.qty">数量</th><th data-i18n="th.balance">变动后库存</th><th data-i18n="th.note">备注</th></tr></thead>
             <tbody id="logTbody"></tbody>
           </table>
           <div class="empty" id="logEmpty" hidden>
-            <div class="big">≡</div><div>暂无出入库记录</div>
+            <div class="big">≡</div><div data-i18n="log.empty">暂无出入库记录</div>
           </div>
         </div>
       </div>
       <!-- ===== 页面5：BOM 核对 ===== -->
       <div class="panel" id="bomPanel" hidden>
         <div class="panel-head">
-          <h2>BOM 核对</h2>
-          <span class="crumb" id="bomCrumb">上传立创EDA导出的 BOM 表（.xlsx / .csv），与仓库库存比对</span>
+          <h2 data-i18n="nav.bom">BOM 核对</h2>
+          <span class="crumb" id="bomCrumb" data-i18n="bom.crumb0">上传立创EDA导出的 BOM 表（.xlsx / .csv），与仓库库存比对</span>
           <div class="spacer" style="flex:1"></div>
-          <span class="fb-label">生产套数</span>
+          <span class="fb-label" data-i18n="bom.mult">生产套数</span>
           <input id="bomMult" type="number" min="1" step="1" value="1">
-          <button class="btn primary" id="bomPickBtn">选择 BOM 文件</button>
-          <button class="btn green" id="bomInBtn" disabled>按 BOM 入库</button>
-          <button class="btn amber" id="bomOutBtn" disabled>按 BOM 出库</button>
-          <button class="btn" id="bomExportBtn" disabled>导出缺料 BOM</button>
+          <button class="btn primary" id="bomPickBtn" data-i18n="bom.pick">选择 BOM 文件</button>
+          <button class="btn green" id="bomInBtn" disabled data-i18n="bom.in">按 BOM 入库</button>
+          <button class="btn amber" id="bomOutBtn" disabled data-i18n="bom.out">按 BOM 出库</button>
+          <button class="btn" id="bomExportBtn" disabled data-i18n="bom.export0">导出缺料 BOM</button>
           <input type="file" id="bomFile" accept=".xlsx,.csv" hidden>
         </div>
         <div class="bom-stats" id="bomStats" hidden></div>
         <div style="overflow-x:auto">
           <table id="bomTable" hidden>
             <thead><tr>
-              <th style="width:50px">No.</th><th>参数 / 型号</th><th>封装</th><th>位号</th>
-              <th>需求</th><th>匹配元器件</th><th>库存</th><th>状态</th>
+              <th style="width:50px">No.</th><th data-i18n="th.param">参数 / 型号</th><th data-i18n="th.pkg">封装</th><th data-i18n="th.des">位号</th>
+              <th data-i18n="th.req">需求</th><th data-i18n="th.match">匹配元器件</th><th data-i18n="th.stock">库存</th><th data-i18n="th.status">状态</th>
             </tr></thead>
             <tbody id="bomTbody"></tbody>
           </table>
           <div class="empty" id="bomEmpty">
-            <div class="big">⇪</div><div>尚未上传 BOM 表，点击右上角「选择 BOM 文件」开始核对</div>
+            <div class="big">⇪</div><div data-i18n="bom.empty">尚未上传 BOM 表，点击右上角「选择 BOM 文件」开始核对</div>
           </div>
         </div>
       </div>
@@ -354,21 +355,21 @@ tr.flash td{background:var(--accent-soft)}
       <!-- ===== 页面6：分类管理 ===== -->
       <div class="panel" id="catPanel" hidden>
         <div class="panel-head">
-          <h2>分类管理</h2>
-          <span class="crumb">参照立创商城分类结构，可增删改、调整顺序，重命名会同步更新已有元器件</span>
+          <h2 data-i18n="nav.cats">分类管理</h2>
+          <span class="crumb" data-i18n="cats.crumb">参照立创商城分类结构，可增删改、调整顺序，重命名会同步更新已有元器件</span>
           <div class="spacer" style="flex:1"></div>
-          <button class="btn" id="catResetBtn">恢复默认分类</button>
+          <button class="btn" id="catResetBtn" data-i18n="cats.reset">恢复默认分类</button>
         </div>
         <div class="catmgr">
           <div class="cat-col">
-            <h3>一级分类</h3>
+            <h3 data-i18n="cats.parents">一级分类</h3>
             <div id="catParentList"></div>
-            <div class="cat-add"><input id="newParentName" placeholder="新的一级分类名称…"><button class="btn primary" id="addParentBtn">添加</button></div>
+            <div class="cat-add"><input id="newParentName" data-i18n-ph="cats.newparent.ph" placeholder="新的一级分类名称…"><button class="btn primary" id="addParentBtn" data-i18n="cats.add">添加</button></div>
           </div>
           <div class="cat-col">
-            <h3>二级分类 <span class="crumb" id="catChildOf"></span></h3>
+            <h3><span data-i18n="cats.children">二级分类</span> <span class="crumb" id="catChildOf"></span></h3>
             <div id="catChildList"></div>
-            <div class="cat-add"><input id="newChildName" placeholder="新的二级分类名称…"><button class="btn primary" id="addChildBtn">添加</button></div>
+            <div class="cat-add"><input id="newChildName" data-i18n-ph="cats.newchild.ph" placeholder="新的二级分类名称…"><button class="btn primary" id="addChildBtn" data-i18n="cats.add">添加</button></div>
           </div>
         </div>
       </div>
@@ -382,46 +383,46 @@ tr.flash td{background:var(--accent-soft)}
     <div class="modal-head"><h3 id="editTitle">新增元器件</h3><button class="modal-close" data-close="editMask">✕</button></div>
     <div class="modal-body">
       <div class="form-grid">
-        <div class="field"><label>元器件名称 <span class="req">*</span></label><input id="fName" placeholder="如：贴片电阻 10kΩ ±1%"></div>
-        <div class="field"><label>型号 / 规格</label><input id="fModel" placeholder="如：RC0603FR-0710KL"></div>
-        <div class="field"><label>一级分类 <span class="req">*</span></label><select id="fParent"></select></div>
-        <div class="field"><label>二级分类 <span class="req">*</span></label><select id="fChild"></select></div>
-        <div class="field"><label>品牌</label><input id="fBrand" placeholder="如：YAGEO / 国巨"></div>
-        <div class="field"><label>封装</label><input id="fPackage" placeholder="如：0603 / SOT-23 / DIP-8"></div>
-        <div class="field"><label>初始库存 <span class="req">*</span></label><input id="fStock" type="number" min="0" step="1" value="0"></div>
-        <div class="field"><label>低库存阈值</label><input id="fMinStock" type="number" min="0" step="1" value="10"></div>
-        <div class="field"><label>库位</label><input id="fLocation" placeholder="如：A-01-03"></div>
-        <div class="field"><label>单价 (¥)</label><input id="fPrice" type="number" min="0" step="0.0001" placeholder="0.00"></div>
-        <div class="field full"><label>供应商 / 商品编号</label><input id="fSupplier" placeholder="如：立创商城 C25804"></div>
+        <div class="field"><label><span data-i18n="m.name">元器件名称</span> <span class="req">*</span></label><input id="fName" data-i18n-ph="m.name.ph" placeholder="如：贴片电阻 10kΩ ±1%"></div>
+        <div class="field"><label data-i18n="m.model">型号 / 规格</label><input id="fModel" data-i18n-ph="m.model.ph" placeholder="如：RC0603FR-0710KL"></div>
+        <div class="field"><label><span data-i18n="m.parent">一级分类</span> <span class="req">*</span></label><select id="fParent"></select></div>
+        <div class="field"><label><span data-i18n="m.child">二级分类</span> <span class="req">*</span></label><select id="fChild"></select></div>
+        <div class="field"><label data-i18n="m.brand">品牌</label><input id="fBrand" data-i18n-ph="m.brand.ph" placeholder="如：YAGEO / 国巨"></div>
+        <div class="field"><label data-i18n="m.pkg">封装</label><input id="fPackage" data-i18n-ph="m.pkg.ph" placeholder="如：0603 / SOT-23 / DIP-8"></div>
+        <div class="field"><label><span data-i18n="m.stock">初始库存</span> <span class="req">*</span></label><input id="fStock" type="number" min="0" step="1" value="0"></div>
+        <div class="field"><label data-i18n="m.minstock">低库存阈值</label><input id="fMinStock" type="number" min="0" step="1" value="10"></div>
+        <div class="field"><label data-i18n="m.loc">库位</label><input id="fLocation" data-i18n-ph="m.loc.ph" placeholder="如：A-01-03"></div>
+        <div class="field"><label data-i18n="m.price">单价 (¥)</label><input id="fPrice" type="number" min="0" step="0.0001" placeholder="0.00"></div>
+        <div class="field full"><label data-i18n="m.supplier">供应商 / 商品编号</label><input id="fSupplier" data-i18n-ph="m.supplier.ph" placeholder="如：立创商城 C25804"></div>
         <div class="field full">
-          <label>元器件图片</label>
+          <label data-i18n="m.image">元器件图片</label>
           <div class="img-uploader">
-            <div class="img-preview" id="imgPreview"><div class="ph">点击上传<br>或拖拽图片到此</div></div>
+            <div class="img-preview" id="imgPreview"><div class="ph" data-i18n-html="m.imgph">点击上传<br>或拖拽图片到此</div></div>
             <div class="img-actions">
-              <button type="button" class="btn sm" id="pickImgBtn">选择图片</button>
-              <button type="button" class="btn sm red" id="removeImgBtn" hidden>移除图片</button>
-              <span>支持 JPG / PNG，自动压缩存储</span>
+              <button type="button" class="btn sm" id="pickImgBtn" data-i18n="m.pickimg">选择图片</button>
+              <button type="button" class="btn sm red" id="removeImgBtn" hidden data-i18n="m.rmimg">移除图片</button>
+              <span data-i18n="m.imghint">支持 JPG / PNG，自动压缩存储</span>
             </div>
           </div>
           <input type="file" id="imgInput" accept="image/*" hidden>
         </div>
         <div class="field full">
-          <label>数据手册 (Datasheet)</label>
+          <label data-i18n="m.ds">数据手册 (Datasheet)</label>
           <div class="ds-box">
-            <button type="button" class="btn sm" id="pickDsBtn">选择文件</button>
-            <span class="ds-name" id="dsName">未上传</span>
-            <button type="button" class="btn sm" id="openDsBtn" hidden>打开</button>
-            <button type="button" class="btn sm red" id="removeDsBtn" hidden>移除</button>
+            <button type="button" class="btn sm" id="pickDsBtn" data-i18n="ds.pick">选择文件</button>
+            <span class="ds-name" id="dsName" data-i18n="ds.none">未上传</span>
+            <button type="button" class="btn sm" id="openDsBtn" hidden data-i18n="ds.open">打开</button>
+            <button type="button" class="btn sm red" id="removeDsBtn" hidden data-i18n="ds.remove">移除</button>
           </div>
-          <div class="ds-hint">支持 PDF / Word / Excel / 压缩包等，单个文件不超过 20MB，随元件保存在本地数据库</div>
+          <div class="ds-hint" data-i18n="ds.hint">支持 PDF / Word / Excel / 压缩包等，单个文件不超过 20MB，随元件保存在本地数据库</div>
           <input type="file" id="dsInput" accept=".pdf,.doc,.docx,.xls,.xlsx,.txt,.csv,.zip,.rar,.7z,.png,.jpg,.jpeg" hidden>
         </div>
-        <div class="field full"><label>备注描述</label><textarea id="fDesc" placeholder="参数说明、采购链接、替代型号等"></textarea></div>
+        <div class="field full"><label data-i18n="m.desc">备注描述</label><textarea id="fDesc" data-i18n-ph="m.desc.ph" placeholder="参数说明、采购链接、替代型号等"></textarea></div>
       </div>
     </div>
     <div class="modal-foot">
-      <button class="btn" data-close="editMask">取消</button>
-      <button class="btn primary" id="saveCompBtn">保存</button>
+      <button class="btn" data-close="editMask" data-i18n="btn.cancel">取消</button>
+      <button class="btn primary" id="saveCompBtn" data-i18n="btn.save">保存</button>
     </div>
   </div>
 </div>
@@ -502,8 +503,8 @@ let bomRows = null, bomFileName = '', bomMult = 1;   // BOM 核对
 const $ = id => document.getElementById(id);
 const uid = ()=> Date.now().toString(36) + Math.random().toString(36).slice(2,8);
 const esc = s => String(s??'').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const fmtNum = n => Number(n||0).toLocaleString('zh-CN');
-const fmtMoney = n => '¥' + Number(n||0).toLocaleString('zh-CN',{maximumFractionDigits:2});
+const fmtNum = n => Number(n||0).toLocaleString(LANG==='en'?'en-US':'zh-CN');
+const fmtMoney = n => '¥' + Number(n||0).toLocaleString(LANG==='en'?'en-US':'zh-CN',{maximumFractionDigits:2});
 const fmtTime = t => { const d=new Date(t); const p=x=>String(x).padStart(2,'0');
   return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}`; };
 function toast(msg, type){
@@ -523,7 +524,7 @@ function placeholderImg(name, parent){
 }
 function processImage(file){
   return new Promise((resolve,reject)=>{
-    if(!file.type.startsWith('image/')) return reject(new Error('不是图片文件'));
+    if(!file.type.startsWith('image/')) return reject(new Error(T('err.notimage')));
     const reader = new FileReader();
     reader.onload = e=>{
       const img = new Image();
@@ -536,12 +537,247 @@ function processImage(file){
         cv.getContext('2d').drawImage(img,0,0,w,h);
         resolve(cv.toDataURL('image/jpeg', 0.85));
       };
-      img.onerror = ()=>reject(new Error('图片解析失败'));
+      img.onerror = ()=>reject(new Error(T('err.imgparse')));
       img.src = e.target.result;
     };
     reader.readAsDataURL(file);
   });
 }
+
+/* ================= 多语言（中文 / English） ================= */
+let LANG = localStorage.getItem('cw_lang') || 'zh';
+const I18N = {
+  'app.title':['元器件仓库管理系统','Component Warehouse Manager'],
+  'app.name':['元器件仓库','Component Warehouse'],
+  'app.sub':['Component Warehouse','Inventory System'],
+  'nav.overview':['元器件总览','Overview'],
+  'nav.stockin':['入库管理','Stock In'],
+  'nav.stockout':['出库管理','Stock Out'],
+  'nav.logs':['出入库记录','Transactions'],
+  'nav.bom':['BOM 核对','BOM Check'],
+  'nav.cats':['分类管理','Categories'],
+  'side.cats':['元器件分类','Categories'],
+  'top.import':['导入','Import'],
+  'top.export':['导出','Export'],
+  'top.add':['＋ 新增元器件','+ Add Component'],
+  'stat.types':['元器件型号数','Component Types'],
+  'stat.stock':['库存总数量','Total Stock'],
+  'stat.value':['库存总价值','Stock Value'],
+  'stat.low':['低库存预警','Low Stock Alert'],
+  'list.title':['元器件列表','Component List'],
+  'search.ph':['搜索名称 / 型号 / 品牌 / 库位…','Search name / model / brand / location…'],
+  'pkg.title':['按封装筛选','Filter by package'],
+  'pkg.all':['全部封装','All Packages'],
+  'sort.updated':['最近更新','Recently Updated'],
+  'sort.stockDesc':['库存：多 → 少','Stock: High → Low'],
+  'sort.stockAsc':['库存：少 → 多','Stock: Low → High'],
+  'sort.name':['名称 A → Z','Name A → Z'],
+  'th.photo':['图片','Photo'],
+  'th.comp':['元器件','Component'],
+  'th.cat':['分类','Category'],
+  'th.pkg':['封装','Package'],
+  'th.stock':['库存','Stock'],
+  'th.loc':['库位','Location'],
+  'th.price':['单价','Price'],
+  'th.actions':['操作','Actions'],
+  'th.curstock':['当前库存','Current Stock'],
+  'th.qtyin':['入库数量','In Qty'],
+  'th.qtyout':['出库数量','Out Qty'],
+  'th.note':['备注','Note'],
+  'th.time':['时间','Time'],
+  'th.type':['类型','Type'],
+  'th.qty':['数量','Qty'],
+  'th.balance':['变动后库存','Balance'],
+  'th.param':['参数 / 型号','Spec / Model'],
+  'th.des':['位号','Designators'],
+  'th.req':['需求','Required'],
+  'th.match':['匹配元器件','Matched Component'],
+  'th.status':['状态','Status'],
+  'list.empty':['暂无元器件，点击右上角「新增元器件」开始建库','No components yet. Click "+ Add Component" in the top right to start.'],
+  'stock.search.ph':['搜索名称 / 型号 / 库位…','Search name / model / location…'],
+  'fb.cat':['分类筛选','Category'],
+  'fb.pkg':['封装','Package'],
+  'stock.empty':['没有匹配的元器件','No matching components'],
+  'log.title':['出入库流水','Transaction Log'],
+  'log.all':['全部类型','All Types'],
+  'log.in':['仅入库','In Only'],
+  'log.out':['仅出库','Out Only'],
+  'log.empty':['暂无出入库记录','No transactions yet'],
+  'bom.crumb0':['上传立创EDA导出的 BOM 表（.xlsx / .csv），与仓库库存比对','Upload a BOM exported from LCSC EDA (.xlsx / .csv) to compare with warehouse stock'],
+  'bom.mult':['生产套数','Sets'],
+  'bom.pick':['选择 BOM 文件','Select BOM File'],
+  'bom.in':['按 BOM 入库','Stock In by BOM'],
+  'bom.out':['按 BOM 出库','Stock Out by BOM'],
+  'bom.export0':['导出缺料 BOM','Export Shortage BOM'],
+  'bom.empty':['尚未上传 BOM 表，点击右上角「选择 BOM 文件」开始核对','No BOM uploaded yet. Click "Select BOM File" to start checking.'],
+  'cats.crumb':['参照立创商城分类结构，可增删改、调整顺序，重命名会同步更新已有元器件','Based on the LCSC Mall structure. Add, delete, rename or reorder; renaming syncs existing components.'],
+  'cats.reset':['恢复默认分类','Reset to Default'],
+  'cats.parents':['一级分类','Primary Categories'],
+  'cats.children':['二级分类','Subcategories'],
+  'cats.newparent.ph':['新的一级分类名称…','New primary category name…'],
+  'cats.newchild.ph':['新的二级分类名称…','New subcategory name…'],
+  'cats.add':['添加','Add'],
+  'm.name':['元器件名称','Component Name'],
+  'm.name.ph':['如：贴片电阻 10kΩ ±1%','e.g. Chip Resistor 10kΩ ±1%'],
+  'm.model':['型号 / 规格','Model / Spec'],
+  'm.model.ph':['如：RC0603FR-0710KL','e.g. RC0603FR-0710KL'],
+  'm.parent':['一级分类','Primary Category'],
+  'm.child':['二级分类','Subcategory'],
+  'm.brand':['品牌','Brand'],
+  'm.brand.ph':['如：YAGEO / 国巨','e.g. YAGEO'],
+  'm.pkg':['封装','Package'],
+  'm.pkg.ph':['如：0603 / SOT-23 / DIP-8','e.g. 0603 / SOT-23 / DIP-8'],
+  'm.stock':['初始库存','Initial Stock'],
+  'm.minstock':['低库存阈值','Low Stock Threshold'],
+  'm.loc':['库位','Location'],
+  'm.loc.ph':['如：A-01-03','e.g. A-01-03'],
+  'm.price':['单价 (¥)','Unit Price (¥)'],
+  'm.supplier':['供应商 / 商品编号','Supplier / Part No.'],
+  'm.supplier.ph':['如：立创商城 C25804','e.g. LCSC C25804'],
+  'm.image':['元器件图片','Component Image'],
+  'm.imgph':['点击上传<br>或拖拽图片到此','Click to upload<br>or drag & drop an image'],
+  'm.pickimg':['选择图片','Choose Image'],
+  'm.rmimg':['移除图片','Remove'],
+  'm.imghint':['支持 JPG / PNG，自动压缩存储','JPG / PNG supported, compressed automatically'],
+  'm.ds':['数据手册 (Datasheet)','Datasheet'],
+  'ds.pick':['选择文件','Choose File'],
+  'ds.none':['未上传','Not uploaded'],
+  'ds.open':['打开','Open'],
+  'ds.remove':['移除','Remove'],
+  'ds.hint':['支持 PDF / Word / Excel / 压缩包等，单个文件不超过 20MB，随元件保存在本地数据库','PDF / Word / Excel / archives supported, max 20MB per file, stored locally with the component'],
+  'm.desc':['备注描述','Description'],
+  'm.desc.ph':['参数说明、采购链接、替代型号等','Specs, purchase links, alternative models, etc.'],
+  'btn.cancel':['取消','Cancel'],
+  'btn.save':['保存','Save'],
+  'btn.ok':['确定','OK'],
+  'btn.rename':['重命名','Rename'],
+  'btn.del':['删除','Delete'],
+  'btn.edit':['编辑','Edit'],
+  'btn.in':['入库','In'],
+  'btn.out':['出库','Out'],
+  'btn.ds':['手册','Datasheet'],
+  'btn.up':['上移','Move up'],
+  'btn.down':['下移','Move down'],
+  'tree.all':['全部元器件','All Components'],
+  'n.items':['{0} 项','{0} items'],
+  'badge.low':['低库存','Low'],
+  'badge.in':['↓ 入库','↓ In'],
+  'badge.out':['↑ 出库','↑ Out'],
+  'badge.ok':['充足','OK'],
+  'badge.short':['缺 {0}','Short {0}'],
+  'badge.nm':['未匹配','No Match'],
+  'comp.deleted':['（已删除）','(Deleted)'],
+  'si.allparent':['全部一级分类','All Primary Categories'],
+  'si.allchild':['全部二级分类','All Subcategories'],
+  'stock.allcats':['全部分类','All Categories'],
+  'hint.in':['选择元器件，填写数量后确认入库','Select a component, enter a quantity and confirm stock-in'],
+  'hint.out':['出库数量不能超过当前库存','Stock-out quantity cannot exceed current stock'],
+  'note.ph.in':['采购单号 / 来源…','PO No. / Source…'],
+  'note.ph.out':['用途 / 领料人…','Purpose / Recipient…'],
+  'word.in':['入库','Stock In'],
+  'word.out':['出库','Stock Out'],
+  'log.count':['共 {0} 条','{0} records'],
+  'cats.cnt2':['{0} 个子类 · {1} 个元件','{0} subcategories · {1} items'],
+  'cats.cnt':['{0} 个元件','{0} items'],
+  'cats.of':['（{0}）','({0})'],
+  'cats.empty.p':['暂无一级分类，请在下方添加','No primary categories yet. Add one below.'],
+  'cats.empty.c0':['请先添加并选择一级分类','Add and select a primary category first'],
+  'cats.empty.c':['该分类下暂无二级分类，请在下方添加','No subcategories here yet. Add one below.'],
+  'cat.dup.parent':['已存在同名一级分类','A primary category with this name already exists'],
+  'cat.dup.parent2':['该一级分类已存在','Primary category already exists'],
+  'cat.dup.child':['该二级分类已存在','Subcategory already exists'],
+  'cat.dup.child2':['该一级分类下已存在同名二级分类','This subcategory already exists under the primary category'],
+  'cat.name.req':['请输入分类名称','Please enter a category name'],
+  'cat.sel.req':['请先在左侧选择一级分类','Select a primary category on the left first'],
+  'cat.renamed':['已重命名为「{0}」，同步更新 {1} 个元器件','Renamed to "{0}"; {1} components updated'],
+  'cat.added':['已添加一级分类「{0}」','Added primary category "{0}"'],
+  'cat.child.added':['已在「{0}」下添加「{1}」','Added "{1}" under "{0}"'],
+  'cat.del.blocked':['「{0}」下还有 {1} 个元器件，请先把它们改归其他分类再删除','"{0}" still has {1} components. Reassign them before deleting.'],
+  'cat.del.confirm.p':['确定删除一级分类「{0}」及其 {1} 个二级分类吗？','Delete primary category "{0}" and its {1} subcategories?'],
+  'cat.del.confirm.c':['确定删除二级分类「{0}」吗？','Delete subcategory "{0}"?'],
+  'cat.deleted':['已删除分类','Category deleted'],
+  'cat.reset.confirm':['恢复为内置的立创商城分类结构？\n你自定义的分类将被移除（元器件数据保留，但其分类若不存在于默认结构中，需在编辑时重新归类）。','Restore the built-in LCSC Mall category structure?\nYour custom categories will be removed (component data is kept; components whose category is not in the default structure must be re-assigned when editing).'],
+  'cat.reset.done':['已恢复默认分类','Default categories restored'],
+  'err.xlsx.support':['当前浏览器不支持解析 xlsx，请另存为 CSV 后上传','This browser cannot parse xlsx; please save as CSV and upload'],
+  'err.xlsx.invalid':['不是有效的 xlsx 文件','Not a valid xlsx file'],
+  'err.xlsx.sheet':['未找到工作表数据','Worksheet data not found'],
+  'err.bom.header':['未识别到 BOM 表头（需要 Quantity / Comment / Supplier Part 等列）','BOM header not recognized (Quantity / Comment / Supplier Part columns required)'],
+  'err.bom.empty':['BOM 表为空','The BOM is empty'],
+  'via.lcsc':['LCSC编号','LCSC No.'],
+  'via.mfr':['制造商型号','Mfr Part'],
+  'via.value':['参数值','Value'],
+  'via.value.pkg':['参数值(封装不一致)','Value (package mismatch)'],
+  'chip.ok':['库存充足','Sufficient'],
+  'chip.short':['库存不足','Insufficient'],
+  'chip.nm':['未匹配','Unmatched'],
+  'chip.buy':['待采购项','To Purchase'],
+  'bom.crumb':['{0} · 共 {1} 项 · 按 {2} 套计算','{0} · {1} items · {2} sets'],
+  'bom.export.n':['导出缺料 BOM（{0} 项）','Export Shortage BOM ({0})'],
+  'bom.parsed':['已解析 {0} 项，其中 {1} 项库存充足','Parsed {0} items; {1} fully in stock'],
+  'bom.parsefail':['解析失败：','Parse failed: '],
+  'bom.filename':['缺料BOM','Shortage_BOM'],
+  'bom.exported':['已导出缺料 BOM（{0} 项）','Exported shortage BOM ({0} items)'],
+  'bom.none':['没有可{0}的匹配项','No matched items available for {0}'],
+  'bom.skipmsg':['\n跳过 {0} 项（{1}）','\nSkipped {0} items ({1})'],
+  'skip.in':['未匹配到仓库元器件','no matching warehouse component'],
+  'skip.out':['库存不足或未匹配','insufficient stock or unmatched'],
+  'bom.confirm':['将按 BOM「{0}」对 {1} 个元器件执行{2}（需求数量 × {3} 套）{4}\n确定继续？','Apply {2} to {1} components per BOM "{0}" (required qty × {3} sets){4}\nContinue?'],
+  'note.bomin':['采购入库',' purchase stock-in'],
+  'note.bomout':['焊接出库',' soldering stock-out'],
+  'sets':['套',' sets'],
+  'bom.done':['BOM{0}完成：{1} 个元器件已{0}{2}','BOM {0} done: {1} components processed{2}'],
+  'bom.skipped':['，跳过 {0} 项',', {0} skipped'],
+  'qty.invalid':['请输入有效数量','Please enter a valid quantity'],
+  'qty.exceed':['出库数量超过当前库存（{0}）','Stock-out quantity exceeds current stock ({0})'],
+  'stock.done':['{0}成功，「{1}」当前库存 {2}','{0} successful. "{1}" current stock: {2}'],
+  'comp.del.confirm':['确定删除「{0}」吗？\n其出入库记录将保留。','Delete "{0}"?\nIts transaction records will be kept.'],
+  'comp.deleted.toast':['已删除','Deleted'],
+  'err.notimage':['不是图片文件','Not an image file'],
+  'err.imgparse':['图片解析失败','Failed to parse image'],
+  'err.imgfail':['图片处理失败','Image processing failed'],
+  'ds.toobig':['文件超过 20MB，无法保存','File exceeds 20MB and cannot be saved'],
+  'ds.ready':['数据手册已就绪，保存后生效','Datasheet ready; takes effect after saving'],
+  'ds.readfail':['文件读取失败','Failed to read file'],
+  'm.edit':['编辑元器件','Edit Component'],
+  'm.add':['新增元器件','Add Component'],
+  'm.name.req':['请填写元器件名称','Please enter the component name'],
+  'm.saved':['已保存修改','Changes saved'],
+  'm.added':['已新增元器件','Component added'],
+  'note.init':['初始入库','Initial stock-in'],
+  'backup.name':['元器件仓库备份','component-warehouse-backup'],
+  'backup.done':['已导出备份文件','Backup file exported'],
+  'imp.badformat':['文件格式不正确','Invalid file format'],
+  'imp.confirm':['导入将覆盖现有数据（{0} 个元器件、{1} 条流水），确定继续？','Import will overwrite existing data ({0} components, {1} transactions). Continue?'],
+  'imp.done':['导入成功','Import successful'],
+  'imp.fail':['导入失败：','Import failed: '],
+  'ex.req':['需求数量','Required Qty'],
+  'ex.stock':['库存数量','In Stock'],
+  'ex.short':['缺口数量','Shortage Qty'],
+  'ex.match':['匹配元器件','Matched Component'],
+  'ex.via':['匹配方式','Match By'],
+};
+function T(key){
+  const v = I18N[key];
+  if(!v) return key;
+  return LANG==='en' ? v[1] : v[0];
+}
+function TF(key, ...args){ return T(key).replace(/\{(\d+)\}/g, (m,i)=> args[+i]!==undefined ? args[+i] : m); }
+function applyLang(){
+  document.documentElement.lang = LANG==='en' ? 'en' : 'zh-CN';
+  document.title = T('app.title');
+  $('langBtn').textContent = LANG==='en' ? '中文' : 'EN';
+  document.querySelectorAll('[data-i18n]').forEach(el=>{ el.textContent = T(el.dataset.i18n); });
+  document.querySelectorAll('[data-i18n-ph]').forEach(el=>{ el.placeholder = T(el.dataset.i18nPh); });
+  document.querySelectorAll('[data-i18n-html]').forEach(el=>{ el.innerHTML = T(el.dataset.i18nHtml); });
+  document.querySelectorAll('[data-i18n-title]').forEach(el=>{ el.title = T(el.dataset.i18nTitle); });
+  $('pageTitle').textContent = T(VIEW_TITLE_KEYS[view]);
+  renderAll(); renderBom();
+}
+$('langBtn').addEventListener('click', ()=>{
+  LANG = LANG==='zh' ? 'en' : 'zh';
+  localStorage.setItem('cw_lang', LANG);
+  applyLang();
+});
 
 /* ================= Demo 演示数据 ================= */
 const DEMO_VERSION = 3;
@@ -643,7 +879,7 @@ async function seedDemo(){
       location, price, supplier:'立创商城 '+supplier, description:desc, image:null, createdAt:now, updatedAt:now};
     await dbPut('components', c); components.push(c);
     if(stock>0){
-      const t = {id:uid(), componentId:c.id, type:'in', qty:stock, balanceAfter:stock, note:'初始入库', time:now};
+      const t = {id:uid(), componentId:c.id, type:'in', qty:stock, balanceAfter:stock, note:T('note.init'), time:now};
       await dbPut('transactions', t); transactions.push(t);
     }
   }
@@ -657,7 +893,7 @@ function renderTree(){
     countByChild[c.child] = (countByChild[c.child]||0)+1;
   }
   let html = `<button class="cat-item ${activeParent===null?'active':''}" data-parent="">
-    <span style="width:12px"></span>全部元器件<span class="cnt">${components.length}</span></button>`;
+    <span style="width:12px"></span>${T('tree.all')}<span class="cnt">${components.length}</span></button>`;
   for(const [parent, children] of Object.entries(CATEGORIES)){
     const isExp = expanded.has(parent);
     html += `<button class="cat-item ${isExp?'expanded':''} ${activeParent===parent&&!activeChild?'active':''}" data-parent="${esc(parent)}">
@@ -706,7 +942,7 @@ function pkgSourceFor(parent, child){
 function renderPkgOptions(selectEl, current, source){
   const pkgs = [...new Set(source.map(c=>c.package).filter(Boolean))]
     .sort((a,b)=>String(a).localeCompare(String(b)));
-  selectEl.innerHTML = `<option value="">全部封装</option>` +
+  selectEl.innerHTML = `<option value="">${T('pkg.all')}</option>` +
     pkgs.map(p=>`<option value="${esc(p)}" ${p===current?'selected':''}>${esc(p)}</option>`).join('');
   return pkgs.includes(current) ? current : '';  // 当前分类下无该封装时自动重置
 }
@@ -725,7 +961,7 @@ function filteredComponents(){
   const arr = [...list];
   if(sortMode==='stockDesc') arr.sort((a,b)=>(+b.stock||0)-(+a.stock||0));
   else if(sortMode==='stockAsc') arr.sort((a,b)=>(+a.stock||0)-(+b.stock||0));
-  else if(sortMode==='name') arr.sort((a,b)=>String(a.name).localeCompare(String(b.name),'zh'));
+  else if(sortMode==='name') arr.sort((a,b)=>String(a.name).localeCompare(String(b.name), LANG==='en'?'en':'zh'));
   else arr.sort((a,b)=>(b.updatedAt||0)-(a.updatedAt||0));
   return arr;
 }
@@ -739,8 +975,8 @@ function stockBarHTML(c){
 function renderList(){
   pkgFilter = renderPkgOptions($('pkgFilter'), pkgFilter, pkgSourceFor(activeParent, activeChild));
   const list = filteredComponents();
-  const crumb = activeChild ? `${activeParent} / ${activeChild}` : (activeParent || '全部元器件');
-  $('crumbText').textContent = `${crumb} · ${list.length} 项`;
+  const crumb = activeChild ? `${activeParent} / ${activeChild}` : (activeParent || T('tree.all'));
+  $('crumbText').textContent = `${crumb} · ${TF('n.items', list.length)}`;
   $('listEmpty').hidden = list.length > 0;
   $('compTbody').innerHTML = list.map(c=>{
     const low = (+c.stock||0) <= (+c.minStock||0);
@@ -748,7 +984,7 @@ function renderList(){
     const img = c.image || placeholderImg(c.name, c.parent);
     return `<tr>
       <td><img class="thumb" src="${img}" data-big="${c.image?esc(c.id):''}" alt=""></td>
-      <td><div class="c-name">${esc(c.name)}${low?'<span class="low-badge">低库存</span>':''}</div>
+      <td><div class="c-name">${esc(c.name)}${low?'<span class="low-badge">'+T('badge.low')+'</span>':''}</div>
           <div class="c-model">${esc(c.model||'')}${c.brand?' · '+esc(c.brand):''}</div></td>
       <td><span class="tag">${esc(c.child)}</span></td>
       <td>${c.package?`<span class="pkg">${esc(c.package)}</span>`:'<span style="color:var(--faint)">—</span>'}</td>
@@ -756,26 +992,26 @@ function renderList(){
       <td>${c.location?`<span class="loc">${esc(c.location)}</span>`:'—'}</td>
       <td style="color:var(--muted)">${c.price?fmtMoney(c.price):'—'}</td>
       <td><div class="row-actions">
-        ${c.datasheet?`<button class="btn sm ds-btn" data-ds="${esc(c.id)}">手册</button>`:''}
-        <button class="btn sm green" data-in="${esc(c.id)}">入库</button>
-        <button class="btn sm amber" data-out="${esc(c.id)}">出库</button>
-        <button class="btn sm" data-edit="${esc(c.id)}">编辑</button>
-        <button class="btn sm red" data-del="${esc(c.id)}">删除</button>
+        ${c.datasheet?`<button class="btn sm ds-btn" data-ds="${esc(c.id)}">${T('btn.ds')}</button>`:''}
+        <button class="btn sm green" data-in="${esc(c.id)}">${T('btn.in')}</button>
+        <button class="btn sm amber" data-out="${esc(c.id)}">${T('btn.out')}</button>
+        <button class="btn sm" data-edit="${esc(c.id)}">${T('btn.edit')}</button>
+        <button class="btn sm red" data-del="${esc(c.id)}">${T('btn.del')}</button>
       </div></td>
     </tr>`;
   }).join('');
 }
 
 /* ================= 渲染：入库 / 出库页 ================= */
-function stockModeName(){ return view==='stockin' ? '入库' : '出库'; }
+function stockModeName(){ return view==='stockin' ? T('word.in') : T('word.out'); }
 function renderStockFilters(){
   const p = $('siParent');
-  p.innerHTML = `<option value="">全部一级分类</option>` +
+  p.innerHTML = `<option value="">${T('si.allparent')}</option>` +
     Object.keys(CATEGORIES).map(k=>`<option value="${esc(k)}" ${k===siParent?'selected':''}>${esc(k)}</option>`).join('');
   siPkg = renderPkgOptions($('siPkg'), siPkg, pkgSourceFor(siParent, siChild));
   const csel = $('siChild');
   const children = siParent ? (CATEGORIES[siParent]||[]) : [];
-  csel.innerHTML = `<option value="">全部二级分类</option>` +
+  csel.innerHTML = `<option value="">${T('si.allchild')}</option>` +
     children.map(k=>`<option value="${esc(k)}" ${k===siChild?'selected':''}>${esc(k)}</option>`).join('');
   csel.disabled = !siParent;
 }
@@ -792,19 +1028,19 @@ function filteredStockComponents(){
   const order = Object.keys(CATEGORIES);
   return [...list].sort((a,b)=>{
     const d = order.indexOf(a.parent) - order.indexOf(b.parent);
-    return d !== 0 ? d : String(a.name).localeCompare(String(b.name),'zh');
+    return d !== 0 ? d : String(a.name).localeCompare(String(b.name), LANG==='en'?'en':'zh');
   });
 }
 function renderStock(){
   const mode = stockModeName();
-  $('stockPanelTitle').textContent = mode + '管理';
-  $('qtyTh').textContent = mode + '数量';
+  $('stockPanelTitle').textContent = T(view==='stockin'?'nav.stockin':'nav.stockout');
+  $('qtyTh').textContent = T(view==='stockin'?'th.qtyin':'th.qtyout');
   renderStockFilters();
   const list = filteredStockComponents();
-  const parts = [siChild || siParent || '全部分类'];
+  const parts = [siChild || siParent || T('stock.allcats')];
   if(siPkg) parts.push(siPkg);
-  $('stockCrumb').textContent = parts.join(' / ') + ` · ${list.length} 项`;
-  $('siHint').textContent = mode==='入库' ? '选择元器件，填写数量后确认入库' : '出库数量不能超过当前库存';
+  $('stockCrumb').textContent = parts.join(' / ') + ` · ${TF('n.items', list.length)}`;
+  $('siHint').textContent = view==='stockin' ? T('hint.in') : T('hint.out');
   $('stockEmpty').hidden = list.length > 0;
   $('stockTbody').innerHTML = list.map(c=>{
     const low = (+c.stock||0) <= (+c.minStock||0);
@@ -813,15 +1049,15 @@ function renderStock(){
     const btnCls = view==='stockin' ? 'green' : 'amber';
     return `<tr>
       <td><img class="thumb" src="${img}" data-big="${c.image?esc(c.id):''}" alt=""></td>
-      <td><div class="c-name">${esc(c.name)}${low?'<span class="low-badge">低库存</span>':''}</div>
+      <td><div class="c-name">${esc(c.name)}${low?'<span class="low-badge">'+T('badge.low')+'</span>':''}</div>
           <div class="c-model">${esc(c.model||'')}${c.brand?' · '+esc(c.brand):''}</div></td>
       <td><span class="tag">${esc(c.child)}</span></td>
       <td>${c.package?`<span class="pkg">${esc(c.package)}</span>`:'<span style="color:var(--faint)">—</span>'}</td>
       <td class="stock-cell">${stockBarHTML(c)}</td>
       <td>${c.location?`<span class="loc">${esc(c.location)}</span>`:'—'}</td>
       <td><input class="qty-input" type="number" min="1" step="1" placeholder="0" data-qty="${esc(c.id)}"></td>
-      <td><input class="note-input" placeholder="${view==='stockin'?'采购单号 / 来源…':'用途 / 领料人…'}" data-note="${esc(c.id)}"></td>
-      <td><button class="btn sm ${btnCls}" data-do="${esc(c.id)}">${mode}</button></td>
+      <td><input class="note-input" placeholder="${view==='stockin'?T('note.ph.in'):T('note.ph.out')}" data-note="${esc(c.id)}"></td>
+      <td><button class="btn sm ${btnCls}" data-do="${esc(c.id)}">${view==='stockin'?T('btn.in'):T('btn.out')}</button></td>
     </tr>`;
   }).join('');
   if(pendingFocusId){
@@ -835,15 +1071,15 @@ function renderStock(){
 function renderLogs(){
   let list = [...transactions].sort((a,b)=>b.time-a.time);
   if(logFilter!=='all') list = list.filter(t=>t.type===logFilter);
-  $('logCrumb').textContent = `共 ${list.length} 条`;
+  $('logCrumb').textContent = TF('log.count', list.length);
   $('logEmpty').hidden = list.length > 0;
   $('logTbody').innerHTML = list.map(t=>{
     const c = components.find(x=>x.id===t.componentId);
-    const name = c ? `${esc(c.name)} <span class="c-model">${esc(c.model||'')}</span>` : '<span style="color:var(--faint)">（已删除）</span>';
+    const name = c ? `${esc(c.name)} <span class="c-model">${esc(c.model||'')}</span>` : '<span style="color:var(--faint)">'+T('comp.deleted')+'</span>';
     return `<tr>
       <td style="white-space:nowrap;color:var(--muted);font-size:12.5px;font-variant-numeric:tabular-nums">${fmtTime(t.time)}</td>
       <td>${name}</td>
-      <td>${t.type==='in'?'<span class="badge-in">↓ 入库</span>':'<span class="badge-out">↑ 出库</span>'}</td>
+      <td>${t.type==='in'?'<span class="badge-in">'+T('badge.in')+'</span>':'<span class="badge-out">'+T('badge.out')+'</span>'}</td>
       <td class="${t.type==='in'?'qty-in':'qty-out'}">${t.type==='in'?'+':'−'}${fmtNum(t.qty)}</td>
       <td style="font-variant-numeric:tabular-nums">${fmtNum(t.balanceAfter)}</td>
       <td style="color:var(--muted)">${esc(t.note||'—')}</td>
@@ -869,34 +1105,34 @@ function renderCats(){
     if(catEditing && catEditing.parent===p && catEditing.child===null) return renameRowHTML(p);
     return `<div class="cat-row ${p===catSelParent?'sel':''}" data-sel="${esc(p)}">
       <span class="nm">${esc(p)}</span>
-      <span class="cnt2">${CATEGORIES[p].length} 个子类 · ${pCount[p]||0} 个元件</span>
-      <button class="btn sm mv" data-up-p="${esc(p)}" ${i===0?'disabled':''} title="上移">▲</button>
-      <button class="btn sm mv" data-down-p="${esc(p)}" ${i===parents.length-1?'disabled':''} title="下移">▼</button>
-      <button class="btn sm" data-ren-p="${esc(p)}">重命名</button>
-      <button class="btn sm red" data-del-p="${esc(p)}">删除</button>
+      <span class="cnt2">${TF('cats.cnt2', CATEGORIES[p].length, pCount[p]||0)}</span>
+      <button class="btn sm mv" data-up-p="${esc(p)}" ${i===0?'disabled':''} title="${T('btn.up')}">▲</button>
+      <button class="btn sm mv" data-down-p="${esc(p)}" ${i===parents.length-1?'disabled':''} title="${T('btn.down')}">▼</button>
+      <button class="btn sm" data-ren-p="${esc(p)}">${T('btn.rename')}</button>
+      <button class="btn sm red" data-del-p="${esc(p)}">${T('btn.del')}</button>
     </div>`;
-  }).join('') || `<div class="empty">暂无一级分类，请在下方添加</div>`;
-  $('catChildOf').textContent = catSelParent ? `（${catSelParent}）` : '';
+  }).join('') || `<div class="empty">${T('cats.empty.p')}</div>`;
+  $('catChildOf').textContent = catSelParent ? TF('cats.of', catSelParent) : '';
   const children = catSelParent ? (CATEGORIES[catSelParent]||[]) : [];
-  $('catChildList').innerHTML = !catSelParent ? `<div class="empty">请先添加并选择一级分类</div>`
+  $('catChildList').innerHTML = !catSelParent ? `<div class="empty">${T('cats.empty.c0')}</div>`
     : (children.map((ch,i)=>{
       if(catEditing && catEditing.parent===catSelParent && catEditing.child===ch) return renameRowHTML(ch);
       return `<div class="cat-row">
         <span class="nm">${esc(ch)}</span>
-        <span class="cnt2">${cCount[catSelParent+'|'+ch]||0} 个元件</span>
-        <button class="btn sm mv" data-up-c="${esc(ch)}" ${i===0?'disabled':''} title="上移">▲</button>
-        <button class="btn sm mv" data-down-c="${esc(ch)}" ${i===children.length-1?'disabled':''} title="下移">▼</button>
-        <button class="btn sm" data-ren-c="${esc(ch)}">重命名</button>
-        <button class="btn sm red" data-del-c="${esc(ch)}">删除</button>
+        <span class="cnt2">${TF('cats.cnt', cCount[catSelParent+'|'+ch]||0)}</span>
+        <button class="btn sm mv" data-up-c="${esc(ch)}" ${i===0?'disabled':''} title="${T('btn.up')}">▲</button>
+        <button class="btn sm mv" data-down-c="${esc(ch)}" ${i===children.length-1?'disabled':''} title="${T('btn.down')}">▼</button>
+        <button class="btn sm" data-ren-c="${esc(ch)}">${T('btn.rename')}</button>
+        <button class="btn sm red" data-del-c="${esc(ch)}">${T('btn.del')}</button>
       </div>`;
-    }).join('') || `<div class="empty">该分类下暂无二级分类，请在下方添加</div>`);
+    }).join('') || `<div class="empty">${T('cats.empty.c')}</div>`);
   const ri = $('catRenameInput');
   if(ri){ ri.focus(); ri.select(); }
 }
 function renameRowHTML(val){
   return `<div class="cat-row"><input class="cat-rename" id="catRenameInput" value="${esc(val)}">
-    <button class="btn sm green" data-ren-ok="1">确定</button>
-    <button class="btn sm" data-ren-cancel="1">取消</button></div>`;
+    <button class="btn sm green" data-ren-ok="1">${T('btn.ok')}</button>
+    <button class="btn sm" data-ren-cancel="1">${T('btn.cancel')}</button></div>`;
 }
 function commitCatRename(){
   const inp = $('catRenameInput'); if(!inp || !catEditing) return;
@@ -907,7 +1143,7 @@ function commitCatRename(){
 async function renameParentCat(oldName, val){
   const newName = val.trim();
   if(!newName || newName===oldName){ renderCats(); return; }
-  if(CATEGORIES[newName]!==undefined){ toast('已存在同名一级分类','err'); catEditing={parent:oldName,child:null}; renderCats(); return; }
+  if(CATEGORIES[newName]!==undefined){ toast(T('cat.dup.parent'),'err'); catEditing={parent:oldName,child:null}; renderCats(); return; }
   const obj = {};
   for(const [k,v] of Object.entries(CATEGORIES)) obj[k===oldName?newName:k]=v;
   CATEGORIES = obj;
@@ -917,60 +1153,60 @@ async function renameParentCat(oldName, val){
   if(siParent===oldName) siParent = newName;
   if(catSelParent===oldName) catSelParent = newName;
   saveCategories(); renderAll();
-  toast(`已重命名为「${newName}」，同步更新 ${affected.length} 个元器件`,'ok');
+  toast(TF('cat.renamed', newName, affected.length),'ok');
 }
 async function renameChildCat(parent, oldName, val){
   const newName = val.trim();
   const arr = CATEGORIES[parent]||[];
   if(!newName || newName===oldName){ renderCats(); return; }
-  if(arr.includes(newName)){ toast('该一级分类下已存在同名二级分类','err'); catEditing={parent,child:oldName}; renderCats(); return; }
+  if(arr.includes(newName)){ toast(T('cat.dup.child2'),'err'); catEditing={parent,child:oldName}; renderCats(); return; }
   CATEGORIES[parent] = arr.map(x=>x===oldName?newName:x);
   const affected = components.filter(c=>c.parent===parent && c.child===oldName);
   for(const c of affected){ c.child = newName; await dbPut('components', c); }
   if(activeParent===parent && activeChild===oldName) activeChild = newName;
   if(siParent===parent && siChild===oldName) siChild = newName;
   saveCategories(); renderAll();
-  toast(`已重命名为「${newName}」，同步更新 ${affected.length} 个元器件`,'ok');
+  toast(TF('cat.renamed', newName, affected.length),'ok');
 }
 function addParentCat(){
   const inp = $('newParentName'); const name = inp.value.trim();
-  if(!name) return toast('请输入分类名称','err');
-  if(CATEGORIES[name]!==undefined) return toast('该一级分类已存在','err');
+  if(!name) return toast(T('cat.name.req'),'err');
+  if(CATEGORIES[name]!==undefined) return toast(T('cat.dup.parent2'),'err');
   CATEGORIES[name] = []; inp.value = '';
   catSelParent = name;
   saveCategories(); renderAll();
-  toast(`已添加一级分类「${name}」`,'ok');
+  toast(TF('cat.added', name),'ok');
 }
 function addChildCat(){
-  if(!catSelParent) return toast('请先在左侧选择一级分类','err');
+  if(!catSelParent) return toast(T('cat.sel.req'),'err');
   const inp = $('newChildName'); const name = inp.value.trim();
-  if(!name) return toast('请输入分类名称','err');
-  if((CATEGORIES[catSelParent]||[]).includes(name)) return toast('该二级分类已存在','err');
+  if(!name) return toast(T('cat.name.req'),'err');
+  if((CATEGORIES[catSelParent]||[]).includes(name)) return toast(T('cat.dup.child'),'err');
   CATEGORIES[catSelParent].push(name); inp.value = '';
   saveCategories(); renderAll();
-  toast(`已在「${catSelParent}」下添加「${name}」`,'ok');
+  toast(TF('cat.child.added', catSelParent, name),'ok');
 }
 function deleteParentCat(name){
   const n = components.filter(c=>c.parent===name).length;
-  if(n>0) return toast(`「${name}」下还有 ${n} 个元器件，请先把它们改归其他分类再删除`,'err');
-  if(!confirm(`确定删除一级分类「${name}」及其 ${CATEGORIES[name].length} 个二级分类吗？`)) return;
+  if(n>0) return toast(TF('cat.del.blocked', name, n),'err');
+  if(!confirm(TF('cat.del.confirm.p', name, CATEGORIES[name].length))) return;
   delete CATEGORIES[name];
   if(activeParent===name){ activeParent=null; activeChild=null; }
   if(siParent===name){ siParent=''; siChild=''; }
   if(catSelParent===name) catSelParent=null;
   saveCategories(); renderAll();
-  toast('已删除分类','ok');
+  toast(T('cat.deleted'),'ok');
 }
 function deleteChildCat(ch){
   const p = catSelParent; if(!p) return;
   const n = components.filter(c=>c.parent===p && c.child===ch).length;
-  if(n>0) return toast(`「${ch}」下还有 ${n} 个元器件，请先把它们改归其他分类再删除`,'err');
-  if(!confirm(`确定删除二级分类「${ch}」吗？`)) return;
+  if(n>0) return toast(TF('cat.del.blocked', ch, n),'err');
+  if(!confirm(TF('cat.del.confirm.c', ch))) return;
   CATEGORIES[p] = CATEGORIES[p].filter(x=>x!==ch);
   if(activeParent===p && activeChild===ch) activeChild=null;
   if(siParent===p && siChild===ch) siChild='';
   saveCategories(); renderAll();
-  toast('已删除分类','ok');
+  toast(T('cat.deleted'),'ok');
 }
 function moveParentCat(name, dir){
   const keys = Object.keys(CATEGORIES);
@@ -1025,11 +1261,11 @@ document.addEventListener('keydown', e=>{
 $('addParentBtn').addEventListener('click', addParentCat);
 $('addChildBtn').addEventListener('click', addChildCat);
 $('catResetBtn').addEventListener('click', ()=>{
-  if(!confirm('恢复为内置的立创商城分类结构？\n你自定义的分类将被移除（元器件数据保留，但其分类若不存在于默认结构中，需在编辑时重新归类）。')) return;
+  if(!confirm(T('cat.reset.confirm'))) return;
   CATEGORIES = JSON.parse(JSON.stringify(DEFAULT_CATEGORIES));
   activeParent=null; activeChild=null; siParent=''; siChild=''; catSelParent=null; catEditing=null;
   saveCategories(); renderAll();
-  toast('已恢复默认分类','ok');
+  toast(T('cat.reset.done'),'ok');
 });
 
 /* ================= BOM 核对 ================= */
@@ -1039,14 +1275,14 @@ const lcscOf = c => { const m = String(c.supplier||'').match(/C\d{3,}/i); return
 
 /* 极简 xlsx 读取（ZIP + XML，无需外部库） */
 async function readXLSX(file){
-  if(typeof DecompressionStream === 'undefined') throw new Error('当前浏览器不支持解析 xlsx，请另存为 CSV 后上传');
+  if(typeof DecompressionStream === 'undefined') throw new Error(T('err.xlsx.support'));
   const buf = new Uint8Array(await file.arrayBuffer());
   const dv = new DataView(buf.buffer, buf.byteOffset, buf.byteLength);
   let eocd = -1;
   for(let i=buf.length-22; i>=0 && i>buf.length-66000; i--){
     if(dv.getUint32(i,true)===0x06054b50){ eocd=i; break; }
   }
-  if(eocd<0) throw new Error('不是有效的 xlsx 文件');
+  if(eocd<0) throw new Error(T('err.xlsx.invalid'));
   const count = dv.getUint16(eocd+10,true);
   let off = dv.getUint32(eocd+16,true);
   const files = {};
@@ -1084,7 +1320,7 @@ async function readXLSX(file){
       }
     }
   }
-  if(!files[sheetPath]) throw new Error('未找到工作表数据');
+  if(!files[sheetPath]) throw new Error(T('err.xlsx.sheet'));
   const shDoc = new DOMParser().parseFromString(files[sheetPath],'application/xml');
   const colIdx = ref => { let n=0; for(const ch of ref.replace(/\d/g,'')) n = n*26 + ch.charCodeAt(0)-64; return n-1; };
   const grid = [];
@@ -1137,7 +1373,7 @@ function mapBomGrid(grid){
     });
     if('qty' in m && ('comment' in m || 'mfrPart' in m || 'supplierPart' in m)){ hi=i; cols=m; break; }
   }
-  if(hi<0) throw new Error('未识别到 BOM 表头（需要 Quantity / Comment / Supplier Part 等列）');
+  if(hi<0) throw new Error(T('err.bom.header'));
   const rows = [];
   for(let i=hi+1;i<grid.length;i++){
     const g = grid[i]; const get = k => k in cols ? String(g[cols[k]]??'').trim() : '';
@@ -1154,12 +1390,12 @@ function matchBomRow(r){
   const sp = r.supplierPart.toUpperCase();
   if(sp){
     const hit = components.find(c=>lcscOf(c)===sp);
-    if(hit) return {comp:hit, via:'LCSC编号'};
+    if(hit) return {comp:hit, via:'via.lcsc'};
   }
   const mp = normModel(r.mfrPart);
   if(mp){
     const hit = components.find(c=>{ const m = normModel(c.model); return m && (m===mp || m.includes(mp) || mp.includes(m)); });
-    if(hit) return {comp:hit, via:'制造商型号'};
+    if(hit) return {comp:hit, via:'via.mfr'};
   }
   const val = normVal(r.comment) || normVal(r.value);
   if(val){
@@ -1168,10 +1404,10 @@ function matchBomRow(r){
     let cand = components.filter(c=>valRe.test(normVal(c.name)) || (val.length>=5 && valRe.test(normVal(c.model))));
     if(cand.length){
       const size = (r.footprint.match(/(^|\D)(0201|0402|0603|0805|1206|1210|1812|2512)(?!\d)/)||[])[2];
-      let via = '参数值';
+      let via = 'via.value';
       if(size){
         const pk = cand.filter(c=>String(c.package||'').includes(size));
-        if(pk.length) cand = pk; else via = '参数值(封装不一致)';
+        if(pk.length) cand = pk; else via = 'via.value.pkg';
       }
       return {comp:cand[0], via};
     }
@@ -1201,17 +1437,17 @@ function renderBom(){
   const ok = bomRows.filter(r=>r.status==='ok').length;
   const short = bomRows.filter(r=>r.status==='short').length;
   const nm = bomRows.filter(r=>r.status==='nomatch').length;
-  $('bomCrumb').textContent = `${bomFileName} · 共 ${bomRows.length} 项 · 按 ${bomMult} 套计算`;
+  $('bomCrumb').textContent = TF('bom.crumb', bomFileName, bomRows.length, bomMult);
   $('bomStats').innerHTML = `
-    <span class="bom-chip">库存充足<b style="color:var(--green)">${ok}</b></span>
-    <span class="bom-chip">库存不足<b style="color:var(--amber)">${short}</b></span>
-    <span class="bom-chip">未匹配<b style="color:var(--red)">${nm}</b></span>
-    <span class="bom-chip">待采购项<b>${short+nm}</b></span>`;
-  $('bomExportBtn').textContent = `导出缺料 BOM（${short+nm} 项）`;
+    <span class="bom-chip">${T('chip.ok')}<b style="color:var(--green)">${ok}</b></span>
+    <span class="bom-chip">${T('chip.short')}<b style="color:var(--amber)">${short}</b></span>
+    <span class="bom-chip">${T('chip.nm')}<b style="color:var(--red)">${nm}</b></span>
+    <span class="bom-chip">${T('chip.buy')}<b>${short+nm}</b></span>`;
+  $('bomExportBtn').textContent = TF('bom.export.n', short+nm);
   $('bomTbody').innerHTML = bomRows.map(r=>{
-    const badge = r.status==='ok' ? '<span class="badge-ok">充足</span>'
-      : r.status==='short' ? `<span class="badge-short">缺 ${fmtNum(r.short)}</span>`
-      : '<span class="badge-nomatch">未匹配</span>';
+    const badge = r.status==='ok' ? `<span class="badge-ok">${T('badge.ok')}</span>`
+      : r.status==='short' ? `<span class="badge-short">${TF('badge.short', fmtNum(r.short))}</span>`
+      : `<span class="badge-nomatch">${T('badge.nm')}</span>`;
     return `<tr>
       <td style="color:var(--faint)">${esc(r.no)}</td>
       <td><div class="c-name">${esc(r.comment||r.mfrPart||r.value||'—')}</div>
@@ -1219,7 +1455,7 @@ function renderBom(){
       <td style="color:var(--muted);font-size:13px">${esc(r.footprint||'—')}</td>
       <td style="color:var(--muted);font-size:13px">${esc(r.designator||'—')}</td>
       <td style="font-variant-numeric:tabular-nums;font-weight:600">${fmtNum(r.required)}</td>
-      <td>${r.matched?`<span style="color:var(--accent)">${esc(r.matched.name)}</span><div class="c-model">${esc(r.via)} · 库位 ${esc(r.matched.location||'—')}</div>`:'<span style="color:var(--faint)">—</span>'}</td>
+      <td>${r.matched?`<span style="color:var(--accent)">${esc(r.matched.name)}</span><div class="c-model">${esc(T(r.via))} · ${T('th.loc')} ${esc(r.matched.location||'—')}</div>`:'<span style="color:var(--faint)">—</span>'}</td>
       <td style="font-variant-numeric:tabular-nums">${r.matched?fmtNum(r.stock):'—'}</td>
       <td>${badge}</td>
     </tr>`;
@@ -1233,45 +1469,45 @@ $('bomFile').addEventListener('change', async e=>{
   try{
     const grid = /\.csv$/i.test(f.name) ? parseCSVText(await f.text()) : await readXLSX(f);
     bomRows = mapBomGrid(grid);
-    if(!bomRows.length) throw new Error('BOM 表为空');
+    if(!bomRows.length) throw new Error(T('err.bom.empty'));
     bomFileName = f.name;
     renderBom();
     computeBom();
     const ok = bomRows.filter(r=>r.status==='ok').length;
-    toast(`已解析 ${bomRows.length} 项，其中 ${ok} 项库存充足`,'ok');
-  }catch(err){ toast('解析失败：'+err.message,'err'); }
+    toast(TF('bom.parsed', bomRows.length, ok),'ok');
+  }catch(err){ toast(T('bom.parsefail')+err.message,'err'); }
 });
 $('bomExportBtn').addEventListener('click', ()=>{
   if(!bomRows) return;
   computeBom();
   const rows = bomRows.filter(r=>r.status!=='ok');
   const csvEsc = v => { v = String(v??''); return /[",\n\r]/.test(v) ? '"'+v.replace(/"/g,'""')+'"' : v; };
-  const header = ['No.','Quantity','Comment','Designator','Footprint','Value','Manufacturer Part','Manufacturer','Supplier Part','Supplier','需求数量','库存数量','缺口数量','匹配元器件','匹配方式'];
+  const header = ['No.','Quantity','Comment','Designator','Footprint','Value','Manufacturer Part','Manufacturer','Supplier Part','Supplier',T('ex.req'),T('ex.stock'),T('ex.short'),T('ex.match'),T('ex.via')];
   const lines = [header.join(',')];
   for(const r of rows){
     lines.push([r.no, r.qty, r.comment, r.designator, r.footprint, r.value, r.mfrPart, r.mfr, r.supplierPart, r.supplier,
-      r.required, r.matched ? r.stock : 0, r.matched ? r.short : r.required, r.matched ? r.matched.name : '未匹配', r.via||''].map(csvEsc).join(','));
+      r.required, r.matched ? r.stock : 0, r.matched ? r.short : r.required, r.matched ? r.matched.name : T('badge.nm'), r.via ? T(r.via) : ''].map(csvEsc).join(','));
   }
   const blob = new Blob(['\ufeff'+lines.join('\r\n')], {type:'text/csv;charset=utf-8'});
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
-  a.download = `缺料BOM_${bomFileName.replace(/\.(xlsx|csv)$/i,'')}_${new Date().toISOString().slice(0,10)}.csv`;
+  a.download = `${T('bom.filename')}_${bomFileName.replace(/\.(xlsx|csv)$/i,'')}_${new Date().toISOString().slice(0,10)}.csv`;
   a.click();
   URL.revokeObjectURL(a.href);
-  toast(`已导出缺料 BOM（${rows.length} 项）`,'ok');
+  toast(TF('bom.exported', rows.length),'ok');
 });
 
 /* 按 BOM 批量入库 / 出库 */
 async function bomApply(mode){
   if(!bomRows || !bomRows.length) return;
   computeBom();
-  const word = mode==='in' ? '入库' : '出库';
+  const word = mode==='in' ? T('word.in') : T('word.out');
   // 入库：所有匹配到的行；出库：仅库存充足的行
   const applicable = bomRows.filter(r=>r.matched && (mode==='in' || r.status==='ok'));
   const skipped = bomRows.length - applicable.length;
-  if(!applicable.length){ toast(`没有可${word}的匹配项`,'err'); return; }
-  const skipMsg = skipped>0 ? `\n跳过 ${skipped} 项（${mode==='in'?'未匹配到仓库元器件':'库存不足或未匹配'}）` : '';
-  if(!confirm(`将按 BOM「${bomFileName}」对 ${applicable.length} 个元器件执行${word}（需求数量 × ${bomMult} 套）${skipMsg}\n确定继续？`)) return;
+  if(!applicable.length){ toast(TF('bom.none', word),'err'); return; }
+  const skipMsg = skipped>0 ? TF('bom.skipmsg', skipped, mode==='in'?T('skip.in'):T('skip.out')) : '';
+  if(!confirm(TF('bom.confirm', bomFileName, applicable.length, word, bomMult, skipMsg))) return;
   const now = Date.now();
   let done = 0;
   for(const r of applicable){
@@ -1282,24 +1518,24 @@ async function bomApply(mode){
     c.stock = mode==='in' ? c.stock + qty : c.stock - qty;
     c.updatedAt = now;
     const t = {id:uid(), componentId:c.id, type:mode, qty, balanceAfter:c.stock,
-      note:`BOM${mode==='in'?'采购入库':'焊接出库'} ${bomFileName}${bomMult>1?' ×'+bomMult+'套':''}`, time:now};
+      note:`BOM${mode==='in'?T('note.bomin'):T('note.bomout')} ${bomFileName}${bomMult>1?' ×'+bomMult+T('sets'):''}`, time:now};
     await dbPut('components', c);
     await dbPut('transactions', t);
     transactions.push(t);
     done++;
   }
   renderTree(); renderStats(); renderList(); renderStock(); renderLogs(); renderBom();
-  toast(`BOM${word}完成：${done} 个元器件已${word}${skipped>0?`，跳过 ${skipped} 项`:''}`,'ok');
+  toast(TF('bom.done', word, done, skipped>0?TF('bom.skipped', skipped):''),'ok');
 }
 $('bomInBtn').addEventListener('click',()=>bomApply('in'));
 $('bomOutBtn').addEventListener('click',()=>bomApply('out'));
 
 /* ================= 视图切换 ================= */
-const VIEW_TITLES = {overview:'元器件总览', stockin:'入库管理', stockout:'出库管理', logs:'出入库记录', bom:'BOM 核对', cats:'分类管理'};
+const VIEW_TITLE_KEYS = {overview:'nav.overview', stockin:'nav.stockin', stockout:'nav.stockout', logs:'nav.logs', bom:'nav.bom', cats:'nav.cats'};
 function switchView(v){
   view = v;
   document.querySelectorAll('.nav-btn').forEach(x=>x.classList.toggle('active', x.dataset.view===v));
-  $('pageTitle').textContent = VIEW_TITLES[v];
+  $('pageTitle').textContent = T(VIEW_TITLE_KEYS[v]);
   $('statsRow').style.display = v==='overview' ? '' : 'none';
   $('listPanel').hidden = v!=='overview';
   $('stockPanel').hidden = !(v==='stockin'||v==='stockout');
@@ -1319,8 +1555,8 @@ async function doStock(id, qtyEl, noteEl){
   if(!c) return;
   const mode = view==='stockin' ? 'in' : 'out';
   const qty = parseInt(qtyEl.value);
-  if(!qty || qty<=0){ toast('请输入有效数量','err'); qtyEl.focus(); return; }
-  if(mode==='out' && qty > c.stock){ toast(`出库数量超过当前库存（${fmtNum(c.stock)}）`,'err'); qtyEl.focus(); return; }
+  if(!qty || qty<=0){ toast(T('qty.invalid'),'err'); qtyEl.focus(); return; }
+  if(mode==='out' && qty > c.stock){ toast(TF('qty.exceed', fmtNum(c.stock)),'err'); qtyEl.focus(); return; }
   c.stock = mode==='in' ? c.stock + qty : c.stock - qty;
   c.updatedAt = Date.now();
   const t = {id:uid(), componentId:c.id, type:mode, qty, balanceAfter:c.stock, note:noteEl.value.trim(), time:Date.now()};
@@ -1333,7 +1569,7 @@ async function doStock(id, qtyEl, noteEl){
   const tr = qtyEl.closest('tr');
   tr.querySelector('.stock-cell').innerHTML = stockBarHTML(c);
   tr.classList.add('flash'); setTimeout(()=>tr.classList.remove('flash'), 900);
-  toast(`${mode==='in'?'入库':'出库'}成功，「${c.name}」当前库存 ${fmtNum(c.stock)}`,'ok');
+  toast(TF('stock.done', mode==='in'?T('word.in'):T('word.out'), c.name, fmtNum(c.stock)),'ok');
 }
 $('stockTbody').addEventListener('click', e=>{
   const b = e.target.closest('button,img.thumb');
@@ -1383,10 +1619,10 @@ $('compTbody').addEventListener('click', async e=>{
   else if(b.dataset.del){
     const c = components.find(x=>x.id===b.dataset.del);
     if(!c) return;
-    if(!confirm(`确定删除「${c.name}」吗？\n其出入库记录将保留。`)) return;
+    if(!confirm(TF('comp.del.confirm', c.name))) return;
     await dbDel('components', c.id);
     components = components.filter(x=>x.id!==c.id);
-    renderAll(); toast('已删除','ok');
+    renderAll(); toast(T('comp.deleted.toast'),'ok');
   }
   else if(b.dataset.big){
     const c = components.find(x=>x.id===b.dataset.big);
@@ -1418,13 +1654,13 @@ $('fParent').addEventListener('change', ()=>fillChildSelect($('fParent').value, 
 
 function setPreviewImg(dataUrl){
   const pv = $('imgPreview');
-  pv.innerHTML = dataUrl ? `<img src="${dataUrl}">` : `<div class="ph">点击上传<br>或拖拽图片到此</div>`;
+  pv.innerHTML = dataUrl ? `<img src="${dataUrl}">` : `<div class="ph">${T('m.imgph')}</div>`;
   $('removeImgBtn').hidden = !dataUrl;
 }
 function openEditModal(id){
   editingId = id || null;
   const c = id ? components.find(x=>x.id===id) : null;
-  $('editTitle').textContent = c ? '编辑元器件' : '新增元器件';
+  $('editTitle').textContent = c ? T('m.edit') : T('m.add');
   $('fName').value = c?.name||''; $('fModel').value = c?.model||'';
   $('fBrand').value = c?.brand||''; $('fPackage').value = c?.package||'';
   $('fStock').value = c ? c.stock : 0; $('fMinStock').value = c ? c.minStock : 10;
@@ -1441,7 +1677,7 @@ function openEditModal(id){
 }
 async function handleImageFile(file){
   try{ editingImage = await processImage(file); setPreviewImg(editingImage); }
-  catch(e){ toast(e.message||'图片处理失败','err'); }
+  catch(e){ toast(e.message||T('err.imgfail'),'err'); }
 }
 $('pickImgBtn').addEventListener('click',()=>$('imgInput').click());
 $('imgPreview').addEventListener('click',()=>$('imgInput').click());
@@ -1454,7 +1690,7 @@ $('removeImgBtn').addEventListener('click',e=>{e.stopPropagation(); editingImage
 const fmtSize = n => n>=1048576 ? (n/1048576).toFixed(1)+' MB' : Math.max(1,Math.round(n/1024))+' KB';
 function setDsUI(){
   const ds = editingDatasheet;
-  $('dsName').textContent = ds ? `${ds.name}（${fmtSize(ds.size)}）` : '未上传';
+  $('dsName').textContent = ds ? `${ds.name}（${fmtSize(ds.size)}）` : T('ds.none');
   $('openDsBtn').hidden = !ds;
   $('removeDsBtn').hidden = !ds;
 }
@@ -1478,13 +1714,13 @@ $('pickDsBtn').addEventListener('click',()=>$('dsInput').click());
 $('dsInput').addEventListener('change', e=>{
   const f = e.target.files[0]; e.target.value='';
   if(!f) return;
-  if(f.size > 20*1048576) return toast('文件超过 20MB，无法保存','err');
+  if(f.size > 20*1048576) return toast(T('ds.toobig'),'err');
   const reader = new FileReader();
   reader.onload = ev=>{
     editingDatasheet = {name:f.name, size:f.size, dataUrl:ev.target.result};
-    setDsUI(); toast('数据手册已就绪，保存后生效','ok');
+    setDsUI(); toast(T('ds.ready'),'ok');
   };
-  reader.onerror = ()=>toast('文件读取失败','err');
+  reader.onerror = ()=>toast(T('ds.readfail'),'err');
   reader.readAsDataURL(f);
 });
 $('openDsBtn').addEventListener('click',()=>{ if(editingDatasheet) openDatasheet(editingDatasheet); });
@@ -1492,7 +1728,7 @@ $('removeDsBtn').addEventListener('click',()=>{ editingDatasheet=null; setDsUI()
 
 $('saveCompBtn').addEventListener('click', async ()=>{
   const name = $('fName').value.trim();
-  if(!name) return toast('请填写元器件名称','err');
+  if(!name) return toast(T('m.name.req'),'err');
   const now = Date.now();
   const old = editingId ? components.find(x=>x.id===editingId) : null;
   const c = {
@@ -1514,11 +1750,11 @@ $('saveCompBtn').addEventListener('click', async ()=>{
   const idx = components.findIndex(x=>x.id===c.id);
   if(idx>=0) components[idx]=c; else components.push(c);
   if(!old && c.stock>0){
-    const t = {id:uid(), componentId:c.id, type:'in', qty:c.stock, balanceAfter:c.stock, note:'初始入库', time:now};
+    const t = {id:uid(), componentId:c.id, type:'in', qty:c.stock, balanceAfter:c.stock, note:T('note.init'), time:now};
     await dbPut('transactions', t); transactions.push(t);
   }
   hideMask('editMask'); renderAll();
-  toast(old ? '已保存修改' : '已新增元器件','ok');
+  toast(old ? T('m.saved') : T('m.added'),'ok');
 });
 
 /* ================= 总览页 搜索/排序 ================= */
@@ -1534,10 +1770,10 @@ $('exportBtn').addEventListener('click',()=>{
   const blob = new Blob([data], {type:'application/json'});
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
-  a.download = `元器件仓库备份_${new Date().toISOString().slice(0,10)}.json`;
+  a.download = `${T('backup.name')}_${new Date().toISOString().slice(0,10)}.json`;
   a.click();
   URL.revokeObjectURL(a.href);
-  toast('已导出备份文件','ok');
+  toast(T('backup.done'),'ok');
 });
 $('importBtn').addEventListener('click',()=>$('importFile').click());
 $('importFile').addEventListener('change', async e=>{
@@ -1545,8 +1781,8 @@ $('importFile').addEventListener('change', async e=>{
   if(!f) return;
   try{
     const data = JSON.parse(await f.text());
-    if(!Array.isArray(data.components)) throw new Error('文件格式不正确');
-    if(!confirm(`导入将覆盖现有数据（${data.components.length} 个元器件、${(data.transactions||[]).length} 条流水），确定继续？`)) return;
+    if(!Array.isArray(data.components)) throw new Error(T('imp.badformat'));
+    if(!confirm(TF('imp.confirm', data.components.length, (data.transactions||[]).length))) return;
     await dbClear('components'); await dbClear('transactions');
     for(const c of data.components) await dbPut('components', c);
     for(const t of (data.transactions||[])) await dbPut('transactions', t);
@@ -1554,8 +1790,8 @@ $('importFile').addEventListener('change', async e=>{
       CATEGORIES = data.categories; saveCategories();
     }
     components = data.components; transactions = data.transactions||[];
-    renderAll(); toast('导入成功','ok');
-  }catch(err){ toast('导入失败：'+err.message,'err'); }
+    renderAll(); toast(T('imp.done'),'ok');
+  }catch(err){ toast(T('imp.fail')+err.message,'err'); }
 });
 
 /* ================= 初始化 ================= */
@@ -1564,7 +1800,7 @@ $('importFile').addEventListener('change', async e=>{
   components = await dbAll('components');
   transactions = await dbAll('transactions');
   await seedDemo();
-  renderAll();
+  applyLang();
 })();
 </script>
 </body>
