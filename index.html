@@ -13,6 +13,24 @@
   --green:#3ecf8e; --green-soft:rgba(62,207,142,.12);
   --red:#f0665c; --red-soft:rgba(240,102,92,.12);
   --amber:#f0a838; --amber-soft:rgba(240,168,56,.12);
+  --purple:#b79bff; --purple-soft:rgba(153,102,255,.14); --purple-border:rgba(153,102,255,.42);
+  --accent-hover:#3d7ef0; --scroll:#232d3b;
+  --mask:rgba(4,7,12,.72); --mask-view:rgba(0,0,0,.85);
+  --ph-bg:#151b25; --ph-text:#0a0e14;
+  --radius:10px;
+}
+[data-theme="light"]{
+  --bg:#eef1f6; --panel:#ffffff; --panel2:#f1f4f9; --input:#ffffff;
+  --border:#dfe5ee; --border-strong:#c6d0dd;
+  --text:#1c2735; --muted:#5d6b7e; --faint:#93a0b1;
+  --accent:#2f6fe0; --accent-soft:rgba(47,111,224,.1);
+  --green:#1e9e67; --green-soft:rgba(30,158,103,.12);
+  --red:#d84a40; --red-soft:rgba(216,74,64,.1);
+  --amber:#c07f14; --amber-soft:rgba(192,127,20,.12);
+  --purple:#7a4fe0; --purple-soft:rgba(122,79,224,.1); --purple-border:rgba(122,79,224,.35);
+  --accent-hover:#1f5fd0; --scroll:#c2ccd9;
+  --mask:rgba(35,45,60,.45); --mask-view:rgba(20,26,35,.82);
+  --ph-bg:#e3e9f1; --ph-text:#ffffff;
   --radius:10px;
 }
 *{box-sizing:border-box;margin:0;padding:0}
@@ -20,7 +38,7 @@ html,body{height:100%}
 body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei","Segoe UI",sans-serif;background:var(--bg);color:var(--text);font-size:15.5px}
 #app{display:flex;min-height:100vh}
 ::-webkit-scrollbar{width:8px;height:8px}
-::-webkit-scrollbar-thumb{background:#232d3b;border-radius:4px}
+::-webkit-scrollbar-thumb{background:var(--scroll);border-radius:4px}
 ::-webkit-scrollbar-track{background:transparent}
 
 /* ===== 侧边栏 ===== */
@@ -57,7 +75,7 @@ main{flex:1;min-width:0;display:flex;flex-direction:column}
 .btn{padding:10px 18px;border-radius:8px;border:1px solid var(--border-strong);background:transparent;color:var(--text);cursor:pointer;font-size:14px;transition:border-color .12s,background .12s,color .12s;white-space:nowrap}
 .btn:hover{border-color:var(--muted)}
 .btn.primary{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:500}
-.btn.primary:hover{background:#3d7ef0;border-color:#3d7ef0}
+.btn.primary:hover{background:var(--accent-hover);border-color:var(--accent-hover)}
 .btn.sm{padding:7px 14px;font-size:13px;border-radius:6px}
 .btn.mv{padding:7px 9px;font-size:11px;line-height:1.2}
 .btn[disabled]{opacity:.32;cursor:not-allowed;pointer-events:none}
@@ -118,7 +136,7 @@ tbody tr:last-child td{border-bottom:none}
 .c-name{font-weight:600;font-size:15.5px}
 .c-model{font-size:13px;color:var(--muted);margin-top:3px}
 .tag{display:inline-block;padding:4px 11px;border-radius:5px;font-size:12.5px;background:var(--accent-soft);color:var(--accent);white-space:nowrap}
-.pkg{display:inline-block;padding:5px 13px;border-radius:6px;font-size:14px;font-weight:600;font-family:ui-monospace,Menlo,monospace;letter-spacing:.5px;background:rgba(153,102,255,.16);color:#b79bff;border:1px solid rgba(153,102,255,.42);white-space:nowrap}
+.pkg{display:inline-block;padding:5px 13px;border-radius:6px;font-size:14px;font-weight:600;font-family:ui-monospace,Menlo,monospace;letter-spacing:.5px;background:var(--purple-soft);color:var(--purple);border:1px solid var(--purple-border);white-space:nowrap}
 .stock-cell{min-width:150px}
 .stock-bar{height:9px;border-radius:5px;background:var(--input);border:1px solid var(--border-strong);overflow:hidden}
 .stock-fill{height:100%;border-radius:5px;background:var(--green);transition:width .35s}
@@ -130,8 +148,8 @@ tbody tr:last-child td{border-bottom:none}
 .stock-nums b.zero{color:var(--red)}
 .loc{font-family:ui-monospace,Menlo,monospace;font-size:12.5px;color:var(--muted);border:1px solid var(--border-strong);padding:3px 9px;border-radius:5px;white-space:nowrap}
 .row-actions{display:flex;gap:6px;flex-wrap:wrap}
-.ds-btn{color:#a98bff;border-color:rgba(153,102,255,.4)}
-.ds-btn:hover{background:rgba(153,102,255,.12);border-color:#a98bff}
+.ds-btn{color:var(--purple);border-color:var(--purple-border)}
+.ds-btn:hover{background:var(--purple-soft);border-color:var(--purple)}
 .empty{padding:64px 20px;text-align:center;color:var(--faint)}
 .empty .big{font-size:40px;margin-bottom:12px;opacity:.6}
 .low-badge{display:inline-block;margin-left:8px;padding:2px 8px;border-radius:4px;background:var(--amber-soft);color:var(--amber);font-size:11.5px;font-weight:600}
@@ -159,7 +177,7 @@ tr.flash td{background:var(--accent-soft)}
 .qty-out{color:var(--red);font-weight:700;font-variant-numeric:tabular-nums}
 
 /* ===== 弹窗 ===== */
-.modal-mask{position:fixed;inset:0;background:rgba(4,7,12,.72);display:none;align-items:center;justify-content:center;z-index:100;padding:20px}
+.modal-mask{position:fixed;inset:0;background:var(--mask);display:none;align-items:center;justify-content:center;z-index:100;padding:20px}
 .modal-mask.show{display:flex}
 .modal{background:var(--panel);border:1px solid var(--border-strong);border-radius:14px;width:660px;max-width:100%;max-height:92vh;overflow-y:auto;animation:pop .16s ease}
 @keyframes pop{from{transform:translateY(10px);opacity:0}to{transform:none;opacity:1}}
@@ -189,7 +207,7 @@ tr.flash td{background:var(--accent-soft)}
 .ds-name{font-size:14px;color:var(--text);max-width:340px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .ds-hint{font-size:12px;color:var(--faint);margin-top:6px}
 
-.big-view{position:fixed;inset:0;background:rgba(0,0,0,.85);display:none;align-items:center;justify-content:center;z-index:200;cursor:zoom-out}
+.big-view{position:fixed;inset:0;background:var(--mask-view);display:none;align-items:center;justify-content:center;z-index:200;cursor:zoom-out}
 .big-view.show{display:flex}
 .big-view img{max-width:88vw;max-height:88vh;border-radius:10px}
 
@@ -226,6 +244,7 @@ tr.flash td{background:var(--accent-soft)}
     <div class="topbar">
       <h1 id="pageTitle">元器件总览</h1>
       <div class="spacer"></div>
+      <button class="btn" id="themeBtn">日间</button>
       <button class="btn" id="langBtn">EN</button>
       <button class="btn" id="importBtn" data-i18n="top.import">导入</button>
       <button class="btn" id="exportBtn" data-i18n="top.export">导出</button>
@@ -238,7 +257,7 @@ tr.flash td{background:var(--accent-soft)}
       <div class="stats" id="statsRow">
         <div class="stat"><div class="ic" style="background:var(--accent-soft);color:var(--accent)">▦</div><div><div class="num" id="stTypes">0</div><div class="lbl" data-i18n="stat.types">元器件型号数</div></div></div>
         <div class="stat"><div class="ic" style="background:var(--green-soft);color:var(--green)">◈</div><div><div class="num" id="stStock">0</div><div class="lbl" data-i18n="stat.stock">库存总数量</div></div></div>
-        <div class="stat"><div class="ic" style="background:rgba(153,102,255,.13);color:#a98bff">¥</div><div><div class="num" id="stValue">¥0</div><div class="lbl" data-i18n="stat.value">库存总价值</div></div></div>
+        <div class="stat"><div class="ic" style="background:var(--purple-soft);color:var(--purple)">¥</div><div><div class="num" id="stValue">¥0</div><div class="lbl" data-i18n="stat.value">库存总价值</div></div></div>
         <div class="stat warn"><div class="ic" style="background:var(--amber-soft);color:var(--amber)">⚠</div><div><div class="num" id="stLow">0</div><div class="lbl" data-i18n="stat.low">低库存预警</div></div></div>
       </div>
 
@@ -518,8 +537,10 @@ const PALETTE = ['#4c8dff','#8b5cf6','#ec4899','#f97316','#06b6d4','#3ecf8e','#a
 function placeholderImg(name, parent){
   let h = 0; for(const c of String(parent||'')) h = (h*31 + c.charCodeAt(0)) >>> 0;
   const color = PALETTE[h % PALETTE.length];
+  const phBg = getComputedStyle(document.documentElement).getPropertyValue('--ph-bg').trim() || '#151b25';
+  const phText = getComputedStyle(document.documentElement).getPropertyValue('--ph-text').trim() || '#0a0e14';
   const txt = esc(String(name||'?').slice(0,2));
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="88" height="88"><rect width="88" height="88" rx="12" fill="#151b25"/><rect x="12" y="28" width="64" height="32" rx="7" fill="${color}"/><rect x="2" y="40" width="10" height="4" rx="2" fill="${color}88"/><rect x="76" y="40" width="10" height="4" rx="2" fill="${color}88"/><text x="44" y="49" text-anchor="middle" font-size="14" fill="#0a0e14" font-family="sans-serif" font-weight="bold">${txt}</text></svg>`;
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="88" height="88"><rect width="88" height="88" rx="12" fill="${phBg}"/><rect x="12" y="28" width="64" height="32" rx="7" fill="${color}"/><rect x="2" y="40" width="10" height="4" rx="2" fill="${color}88"/><rect x="76" y="40" width="10" height="4" rx="2" fill="${color}88"/><text x="44" y="49" text-anchor="middle" font-size="14" fill="${phText}" font-family="sans-serif" font-weight="bold">${txt}</text></svg>`;
   return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
 }
 function processImage(file){
@@ -546,6 +567,7 @@ function processImage(file){
 
 /* ================= 多语言（中文 / English） ================= */
 let LANG = localStorage.getItem('cw_lang') || 'zh';
+let THEME = localStorage.getItem('cw_theme') || 'dark';
 const I18N = {
   'app.title':['元器件仓库管理系统','Component Warehouse Manager'],
   'app.name':['元器件仓库','Component Warehouse'],
@@ -557,6 +579,8 @@ const I18N = {
   'nav.bom':['BOM 核对','BOM Check'],
   'nav.cats':['分类管理','Categories'],
   'side.cats':['元器件分类','Categories'],
+  'theme.toLight':['日间','Light'],
+  'theme.toDark':['夜间','Dark'],
   'top.import':['导入','Import'],
   'top.export':['导出','Export'],
   'top.add':['＋ 新增元器件','+ Add Component'],
@@ -763,6 +787,7 @@ function T(key){
 }
 function TF(key, ...args){ return T(key).replace(/\{(\d+)\}/g, (m,i)=> args[+i]!==undefined ? args[+i] : m); }
 function applyLang(){
+  applyTheme();
   document.documentElement.lang = LANG==='en' ? 'en' : 'zh-CN';
   document.title = T('app.title');
   $('langBtn').textContent = LANG==='en' ? '中文' : 'EN';
@@ -777,6 +802,18 @@ $('langBtn').addEventListener('click', ()=>{
   LANG = LANG==='zh' ? 'en' : 'zh';
   localStorage.setItem('cw_lang', LANG);
   applyLang();
+});
+
+/* ================= 主题（日间/夜间） ================= */
+function applyTheme(){
+  document.documentElement.dataset.theme = THEME;
+  $('themeBtn').textContent = THEME==='dark' ? T('theme.toLight') : T('theme.toDark');
+}
+$('themeBtn').addEventListener('click', ()=>{
+  THEME = THEME==='dark' ? 'light' : 'dark';
+  localStorage.setItem('cw_theme', THEME);
+  applyTheme();
+  renderList(); renderStock(); // 重新绘制主题相关的占位图
 });
 
 /* ================= Demo 演示数据 ================= */
@@ -1796,6 +1833,7 @@ $('importFile').addEventListener('change', async e=>{
 
 /* ================= 初始化 ================= */
 (async function init(){
+  document.documentElement.dataset.theme = THEME;
   _db = await openDB();
   components = await dbAll('components');
   transactions = await dbAll('transactions');
