@@ -279,6 +279,7 @@ tr.flash td{background:var(--accent-soft)}
             <option value="stockAsc" data-i18n="sort.stockAsc">库存：少 → 多</option>
             <option value="name" data-i18n="sort.name">名称 A → Z</option>
           </select>
+          <button class="btn sm" id="locMigBtn" data-i18n="loc.migrate" data-i18n-title="loc.migrate.title" title="库位批量迁移">库位迁移</button>
         </div>
         <div style="overflow-x:auto">
           <table>
@@ -446,6 +447,25 @@ tr.flash td{background:var(--accent-soft)}
     <div class="modal-foot">
       <button class="btn" data-close="editMask" data-i18n="btn.cancel">取消</button>
       <button class="btn primary" id="saveCompBtn" data-i18n="btn.save">保存</button>
+    </div>
+  </div>
+</div>
+
+<!-- 库位批量迁移 -->
+<div class="modal-mask" id="locMask">
+  <div class="modal" style="width:520px">
+    <div class="modal-head"><h3 data-i18n="lm.title">库位批量迁移</h3><button class="modal-close" data-close="locMask">✕</button></div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="field full"><label data-i18n="lm.from">源库位（从此迁出）</label><select id="lmFrom"></select></div>
+        <div class="field full"><label data-i18n="lm.to">目标库位（迁移到）</label><select id="lmTo"></select></div>
+        <div class="field full" id="lmToNewWrap" hidden><label data-i18n="lm.to.new">新库位名称</label><input id="lmToNew" data-i18n-ph="lm.to.new.ph" placeholder="如：B-01-01"></div>
+      </div>
+      <div class="ds-hint" id="lmPreview" style="margin-top:12px"></div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn" data-close="locMask" data-i18n="btn.cancel">取消</button>
+      <button class="btn primary" id="lmConfirm" data-i18n="lm.confirm">确认迁移</button>
     </div>
   </div>
 </div>
@@ -676,6 +696,20 @@ const I18N = {
   'm.desc.ph':['参数说明、采购链接、替代型号等','Specs, purchase links, alternative models, etc.'],
   'btn.cancel':['取消','Cancel'],
   'btn.save':['保存','Save'],
+  'loc.migrate':['库位迁移','Move Location'],
+  'loc.migrate.title':['将同一库位的全部元器件迁移到另一个库位','Move all components at one location to another'],
+  'lm.title':['库位批量迁移','Bulk Location Migration'],
+  'lm.from':['源库位（从此迁出）','Source location (move from)'],
+  'lm.to':['目标库位（迁移到）','Target location (move to)'],
+  'lm.to.new.opt':['＋ 新建库位…','+ New location…'],
+  'lm.to.new':['新库位名称','New location name'],
+  'lm.to.new.ph':['如：B-01-01','e.g. B-01-01'],
+  'lm.preview':['共 {0} 个元器件将被迁移','{0} component type(s) will be moved'],
+  'lm.empty':['还没有元器件设置库位','No locations in use yet'],
+  'lm.confirm':['确认迁移','Migrate'],
+  'lm.same':['目标库位与源库位相同','Target location is the same as source'],
+  'lm.req':['请选择或输入目标库位','Please select or enter a target location'],
+  'lm.done':['已将 {0} 个元器件从「{1}」迁移到「{2}」','Moved {0} component(s) from "{1}" to "{2}"'],
   'btn.ok':['确定','OK'],
   'btn.rename':['重命名','Rename'],
   'btn.del':['删除','Delete'],
@@ -1803,6 +1837,45 @@ $('sortSelect').addEventListener('change', e=>{ sortMode = e.target.value; rende
 $('pkgFilter').addEventListener('change', e=>{ pkgFilter = e.target.value; renderList(); });
 $('logFilter').addEventListener('change', e=>{ logFilter = e.target.value; renderLogs(); });
 $('addBtn').addEventListener('click',()=>openEditModal(null));
+
+/* ================= 库位批量迁移 ================= */
+function locUsage(){
+  const counts = {};
+  components.forEach(c=>{ const l=(c.location||'').trim(); if(l) counts[l]=(counts[l]||0)+1; });
+  return Object.keys(counts).sort((a,b)=>a.localeCompare(b,undefined,{numeric:true})).map(l=>({loc:l,n:counts[l]}));
+}
+function updateLmPreview(){
+  const from = $('lmFrom').value;
+  const n = components.filter(c=>(c.location||'').trim()===from).length;
+  $('lmPreview').textContent = TF('lm.preview', n);
+}
+$('locMigBtn').addEventListener('click', ()=>{
+  const usage = locUsage();
+  if(!usage.length) return toast(T('lm.empty'),'err');
+  $('lmFrom').innerHTML = usage.map(u=>`<option value="${esc(u.loc)}">${esc(u.loc)}（${u.n}）</option>`).join('');
+  $('lmTo').innerHTML = usage.map(u=>`<option value="${esc(u.loc)}">${esc(u.loc)}</option>`).join('')
+    + `<option value="__new__">${esc(T('lm.to.new.opt'))}</option>`;
+  if(usage.length>1) $('lmTo').selectedIndex = 1;
+  $('lmToNew').value=''; $('lmToNewWrap').hidden = true;
+  updateLmPreview();
+  showMask('locMask');
+});
+$('lmFrom').addEventListener('change', updateLmPreview);
+$('lmTo').addEventListener('change', e=>{
+  $('lmToNewWrap').hidden = e.target.value !== '__new__';
+  if(e.target.value==='__new__') $('lmToNew').focus();
+});
+$('lmConfirm').addEventListener('click', async ()=>{
+  const from = $('lmFrom').value;
+  const to = $('lmTo').value === '__new__' ? $('lmToNew').value.trim() : $('lmTo').value;
+  if(!to) return toast(T('lm.req'),'err');
+  if(from===to) return toast(T('lm.same'),'err');
+  const now = Date.now();
+  const affected = components.filter(c=>(c.location||'').trim()===from);
+  for(const c of affected){ c.location = to; c.updatedAt = now; await dbPut('components', c); }
+  hideMask('locMask'); renderAll();
+  toast(TF('lm.done', affected.length, from, to),'ok');
+});
 
 /* ================= 导入 / 导出 ================= */
 $('exportBtn').addEventListener('click',()=>{
