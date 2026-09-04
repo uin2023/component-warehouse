@@ -1,0 +1,1848 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RCL Studio</title>
+<style>
+:root{
+  --bg:#0a0e14; --panel:#10151d; --panel2:#151b25; --input:#0d121a;
+  --border:#1d2530; --border-strong:#2a3543;
+  --text:#dde4ee; --muted:#7d8898; --faint:#4d586a;
+  --accent:#4c8dff; --accent-soft:rgba(76,141,255,.13);
+  --green:#3ecf8e; --green-soft:rgba(62,207,142,.12);
+  --red:#f0665c; --red-soft:rgba(240,102,92,.12);
+  --amber:#f0a838; --amber-soft:rgba(240,168,56,.12);
+  --purple:#b79bff; --purple-soft:rgba(153,102,255,.14); --purple-border:rgba(153,102,255,.42);
+  --accent-hover:#3d7ef0; --scroll:#232d3b;
+  --mask:rgba(4,7,12,.72); --mask-view:rgba(0,0,0,.85);
+  --ph-bg:#151b25; --ph-text:#0a0e14;
+  --chev:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='13' height='9' viewBox='0 0 13 9'><path d='M1.5 1.5l5 5 5-5' fill='none' stroke='%237d8898' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+  --radius:16px;
+  --r-xs:7px; --r-sm:10px; --r-md:12px; --r-lg:16px; --r-xl:22px; --r-pill:999px;
+}
+[data-theme="light"]{
+  --bg:#eef1f6; --panel:#ffffff; --panel2:#f1f4f9; --input:#ffffff;
+  --border:#dfe5ee; --border-strong:#c6d0dd;
+  --text:#1c2735; --muted:#5d6b7e; --faint:#93a0b1;
+  --accent:#2f6fe0; --accent-soft:rgba(47,111,224,.1);
+  --green:#1e9e67; --green-soft:rgba(30,158,103,.12);
+  --red:#d84a40; --red-soft:rgba(216,74,64,.1);
+  --amber:#c07f14; --amber-soft:rgba(192,127,20,.12);
+  --purple:#7a4fe0; --purple-soft:rgba(122,79,224,.1); --purple-border:rgba(122,79,224,.35);
+  --accent-hover:#1f5fd0; --scroll:#c2ccd9;
+  --mask:rgba(35,45,60,.45); --mask-view:rgba(20,26,35,.82);
+  --ph-bg:#e3e9f1; --ph-text:#ffffff;
+  --chev:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='13' height='9' viewBox='0 0 13 9'><path d='M1.5 1.5l5 5 5-5' fill='none' stroke='%235d6b7e' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei","Segoe UI",sans-serif;background:var(--bg);color:var(--text);font-size:15.5px}
+#app{display:flex;min-height:100vh}
+::-webkit-scrollbar{width:8px;height:8px}
+::-webkit-scrollbar-thumb{background:var(--scroll);border-radius:var(--r-pill)}
+::-webkit-scrollbar-track{background:transparent}
+
+/* ===== 侧边栏 ===== */
+#sidebar{width:250px;flex-shrink:0;background:var(--bg);border-right:1px solid var(--border);display:flex;flex-direction:column;position:sticky;top:0;height:100vh;overflow-y:auto}
+.logo{padding:22px 20px 18px;display:flex;align-items:center;gap:11px;border-bottom:1px solid var(--border)}
+.logo b{font-size:17px;font-weight:600;letter-spacing:.5px;display:block}
+.logo small{display:block;font-size:10px;color:var(--faint);letter-spacing:1.5px;margin-top:3px;text-transform:uppercase}
+.nav{padding:14px 12px 6px;display:flex;flex-direction:column;gap:2px}
+.nav-btn{display:flex;align-items:center;gap:10px;width:100%;padding:11px 14px;border:none;border-radius:var(--r-md);background:transparent;color:var(--muted);cursor:pointer;font-size:15px;text-align:left;transition:background .12s,color .12s;border-left:2px solid transparent}
+.nav-btn:hover{color:var(--text);background:var(--panel2)}
+.nav-btn.active{color:var(--accent);background:var(--accent-soft);border-left-color:var(--accent);border-radius:0 var(--r-md) var(--r-md) 0;font-weight:600}
+.nav-btn .ic{width:18px;text-align:center;font-size:14px}
+.cat-title{padding:16px 20px 8px;font-size:12px;color:var(--faint);letter-spacing:2px}
+#catTree{padding:0 12px 24px;display:flex;flex-direction:column;gap:1px}
+.cat-item{width:100%;display:flex;align-items:center;gap:8px;padding:9px 12px;background:none;border:none;color:var(--muted);cursor:pointer;font-size:14px;text-align:left;border-radius:var(--r-sm);transition:background .12s,color .12s}
+.cat-item:hover{background:var(--panel2);color:var(--text)}
+.cat-item.active{background:var(--accent-soft);color:var(--accent)}
+.cat-item .arrow{font-size:9px;width:12px;transition:transform .15s;color:var(--faint)}
+.cat-item.expanded .arrow{transform:rotate(90deg)}
+.cat-item .cnt{margin-left:auto;font-size:12px;color:var(--faint);font-variant-numeric:tabular-nums}
+.cat-item.active .cnt{color:var(--accent)}
+.cat-children{display:flex;flex-direction:column;gap:1px;margin:1px 0 2px}
+.cat-child{width:100%;display:flex;align-items:center;padding:7.5px 12px 7px 36px;background:none;border:none;color:var(--faint);cursor:pointer;font-size:13.5px;text-align:left;border-radius:var(--r-sm)}
+.cat-child:hover{color:var(--text);background:var(--panel2)}
+.cat-child.active{color:var(--accent);background:var(--accent-soft)}
+.cat-child .cnt{margin-left:auto;font-size:12px;color:var(--faint)}
+
+/* ===== 下拉框统一外观 ===== */
+select{appearance:none;-webkit-appearance:none;background-image:var(--chev);background-repeat:no-repeat;background-position:right 14px center;background-size:13px;padding-right:38px !important}
+select::-ms-expand{display:none}
+
+/* ===== 主区域 ===== */
+main{flex:1;min-width:0;display:flex;flex-direction:column}
+.topbar{padding:0 28px;height:68px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px}
+.topbar h1{font-size:18px;font-weight:600;letter-spacing:.5px}
+.topbar .spacer{flex:1}
+.btn{padding:10px 18px;border-radius:var(--r-md);border:1px solid var(--border-strong);background:transparent;color:var(--text);cursor:pointer;font-size:14px;transition:border-color .12s,background .12s,color .12s;white-space:nowrap}
+.btn:hover{border-color:var(--muted)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:500}
+.btn.primary:hover{background:var(--accent-hover);border-color:var(--accent-hover)}
+.btn.sm{padding:7px 14px;font-size:13px;border-radius:var(--r-sm)}
+.btn.mv{padding:7px 9px;font-size:11px;line-height:1.2}
+.btn[disabled]{opacity:.32;cursor:not-allowed;pointer-events:none}
+.btn.green{color:var(--green);border-color:rgba(62,207,142,.4)}
+.btn.green:hover{background:var(--green-soft);border-color:var(--green)}
+.btn.amber{color:var(--amber);border-color:rgba(240,168,56,.4)}
+.btn.amber:hover{background:var(--amber-soft);border-color:var(--amber)}
+.btn.red{color:var(--red);border-color:rgba(240,102,92,.35)}
+.btn.red:hover{background:var(--red-soft);border-color:var(--red)}
+
+.content{padding:24px 28px 48px;overflow-y:auto}
+
+/* 统计卡片 */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin-bottom:22px}
+.stat{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);padding:20px 22px;display:flex;gap:14px;align-items:center}
+.stat .ic{width:40px;height:40px;border-radius:var(--r-md);display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0}
+.stat .num{font-size:24px;font-weight:700;font-variant-numeric:tabular-nums;line-height:1.2}
+.stat .lbl{font-size:13px;color:var(--muted)}
+.stat.warn .num{color:var(--amber)}
+
+/* 面板 */
+.panel{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
+.panel-head{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.panel-head h2{font-size:14px;font-weight:600;letter-spacing:.5px}
+.crumb{color:var(--muted);font-size:13px}
+.panel-head select,.filter-bar select{border:1px solid var(--border-strong);border-radius:var(--r-md);background-color:var(--input);color:var(--text);padding:0 36px 0 14px;font-size:14px;outline:none;height:44px;min-width:130px}
+.panel-head select:focus,.filter-bar select:focus{border-color:var(--accent)}
+.search-inline{position:relative}
+.search-inline input{width:270px;padding:0 14px;border:1px solid var(--border-strong);border-radius:var(--r-md);background:var(--input);color:var(--text);font-size:14px;outline:none;height:44px}
+.search-inline input:focus{border-color:var(--accent)}
+.search-inline .si{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--faint);font-size:12px}
+::placeholder{color:var(--faint)}
+
+/* 筛选栏（入库/出库页） */
+.filter-bar{display:flex;gap:12px;padding:16px 20px;border-bottom:1px solid var(--border);align-items:center;flex-wrap:wrap}
+.filter-bar .fb-label{font-size:13.5px;color:var(--muted)}
+/* ===== 分类管理 ===== */
+.catmgr{display:grid;grid-template-columns:1fr 1fr;gap:22px;padding:20px}
+.cat-col h3{font-size:14px;color:var(--muted);margin:0 0 12px;font-weight:600}
+.cat-row{display:flex;align-items:center;gap:10px;padding:10px 14px;border:1px solid var(--border);border-radius:var(--r-md);margin-bottom:8px;background:var(--panel2);transition:border-color .12s,background .12s}
+.cat-row[data-sel]{cursor:pointer}
+.cat-row[data-sel]:hover{border-color:var(--border-strong)}
+.cat-row.sel{border-color:var(--accent);background:var(--accent-soft)}
+.cat-row .nm{flex:1;font-size:15px;font-weight:600}
+.cat-row .cnt2{font-size:12.5px;color:var(--faint);white-space:nowrap}
+.cat-add{display:flex;gap:10px;margin-top:14px}
+.cat-add input,.cat-rename{flex:1;padding:0 14px;height:44px;border:1px solid var(--border-strong);border-radius:var(--r-md);background:var(--input);color:var(--text);font-size:14.5px;outline:none}
+.cat-add input:focus,.cat-rename:focus{border-color:var(--accent)}
+
+/* 表格 */
+table{width:100%;border-collapse:collapse}
+th{padding:13px 12px;text-align:left;font-size:12.5px;color:var(--faint);font-weight:600;letter-spacing:1.5px;border-bottom:1px solid var(--border);white-space:nowrap;text-transform:uppercase}
+td{padding:13px 12px;border-bottom:1px solid var(--border);font-size:15px;vertical-align:middle}
+tbody tr{transition:background .1s}
+tbody tr:hover{background:var(--panel2)}
+tbody tr:last-child td{border-bottom:none}
+.thumb{width:50px;height:50px;border-radius:var(--r-md);object-fit:cover;border:1px solid var(--border-strong);cursor:pointer;display:block;background:var(--input)}
+.c-name{font-weight:600;font-size:15.5px}
+.c-model{font-size:13px;color:var(--muted);margin-top:3px}
+.tag{display:inline-block;padding:5px 12px;border-radius:var(--r-xs);font-size:13.5px;background:var(--accent-soft);color:var(--accent);white-space:nowrap}
+.pkg{display:inline-block;padding:5px 12px;border-radius:var(--r-xs);font-size:13.5px;font-weight:600;font-family:ui-monospace,Menlo,monospace;letter-spacing:.5px;background:var(--purple-soft);color:var(--purple);border:1px solid var(--purple-border);white-space:nowrap}
+.stock-cell{min-width:150px}
+.stock-bar{height:9px;border-radius:var(--r-pill);background:var(--input);border:1px solid var(--border-strong);overflow:hidden}
+.stock-fill{height:100%;border-radius:var(--r-pill);background:var(--green);transition:width .35s}
+.stock-fill.low{background:var(--amber)}
+.stock-fill.zero{background:var(--red)}
+.stock-nums{margin-top:6px;font-size:13px;color:var(--faint);font-variant-numeric:tabular-nums;white-space:nowrap}
+.stock-nums b{font-size:15px;font-weight:700;color:var(--green)}
+.stock-nums b.low{color:var(--amber)}
+.stock-nums b.zero{color:var(--red)}
+.loc{display:inline-block;font-family:ui-monospace,Menlo,monospace;font-size:13.5px;color:var(--muted);border:1px solid var(--border-strong);padding:5px 12px;border-radius:var(--r-xs);white-space:nowrap}
+.row-actions{display:flex;gap:6px;flex-wrap:wrap}
+.ds-btn{color:var(--purple);border-color:var(--purple-border)}
+.ds-btn:hover{background:var(--purple-soft);border-color:var(--purple)}
+.empty{padding:64px 20px;text-align:center;color:var(--faint)}
+.empty .big{font-size:40px;margin-bottom:12px;opacity:.6}
+.low-badge{display:inline-block;margin-left:8px;padding:2px 8px;border-radius:var(--r-pill);background:var(--amber-soft);color:var(--amber);font-size:11.5px;font-weight:600}
+
+/* 出入库页行内输入 */
+.qty-input{width:94px;padding:9px 12px;border:1px solid var(--border-strong);border-radius:var(--r-md);background:var(--input);color:var(--text);font-size:15px;outline:none;text-align:right;font-variant-numeric:tabular-nums}
+.qty-input:focus{border-color:var(--accent)}
+.note-input{width:100%;min-width:150px;padding:9px 12px;border:1px solid var(--border-strong);border-radius:var(--r-md);background:var(--input);color:var(--text);font-size:14px;outline:none}
+.note-input:focus{border-color:var(--accent)}
+tr.flash td{background:var(--accent-soft)}
+
+/* 流水徽标 */
+.badge-in,.badge-out{display:inline-flex;align-items:center;gap:5px;padding:4px 12px;border-radius:var(--r-xs);font-size:13px;font-weight:600}
+.badge-in{background:var(--green-soft);color:var(--green)}
+.badge-ok{display:inline-block;padding:4px 11px;border-radius:var(--r-xs);font-size:12.5px;font-weight:600;background:var(--green-soft);color:var(--green);white-space:nowrap}
+.badge-short{display:inline-block;padding:4px 11px;border-radius:var(--r-xs);font-size:12.5px;font-weight:600;background:var(--amber-soft);color:var(--amber);white-space:nowrap}
+.badge-nomatch{display:inline-block;padding:4px 11px;border-radius:var(--r-xs);font-size:12.5px;font-weight:600;background:var(--red-soft);color:var(--red);white-space:nowrap}
+/* ===== BOM 核对 ===== */
+.bom-stats{display:flex;gap:12px;padding:16px 20px;border-bottom:1px solid var(--border);flex-wrap:wrap}
+.bom-chip{padding:10px 16px;border:1px solid var(--border);border-radius:var(--r-md);background:var(--panel2);font-size:14px;color:var(--muted)}
+.bom-chip b{font-size:18px;margin-left:8px;font-variant-numeric:tabular-nums}
+#bomMult{width:90px;height:44px;padding:0 12px;border:1px solid var(--border-strong);border-radius:var(--r-md);background:var(--input);color:var(--text);font-size:14.5px;outline:none;text-align:right;font-variant-numeric:tabular-nums}
+.badge-out{background:var(--red-soft);color:var(--red)}
+.qty-in{color:var(--green);font-weight:700;font-variant-numeric:tabular-nums}
+.qty-out{color:var(--red);font-weight:700;font-variant-numeric:tabular-nums}
+
+/* ===== 弹窗 ===== */
+.modal-mask{position:fixed;inset:0;background:var(--mask);display:none;align-items:center;justify-content:center;z-index:100;padding:20px}
+.modal-mask.show{display:flex}
+.modal{background:var(--panel);border:1px solid var(--border-strong);border-radius:var(--r-xl);width:660px;max-width:100%;max-height:92vh;overflow-y:auto;animation:pop .16s ease}
+@keyframes pop{from{transform:translateY(10px);opacity:0}to{transform:none;opacity:1}}
+.modal-head{padding:20px 24px 0;display:flex;align-items:center;justify-content:space-between}
+.modal-head h3{font-size:15px;font-weight:600}
+.modal-close{border:1px solid var(--border-strong);background:transparent;width:28px;height:28px;border-radius:var(--r-sm);cursor:pointer;font-size:13px;color:var(--muted)}
+.modal-close:hover{color:var(--text);border-color:var(--muted)}
+.modal-body{padding:18px 24px 24px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.form-grid .full{grid-column:1/-1}
+.field label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px}
+.field label .req{color:var(--red)}
+.field input,.field select,.field textarea{width:100%;padding:10px 13px;border:1px solid var(--border-strong);border-radius:var(--r-md);font-size:14px;outline:none;background-color:var(--input);color:var(--text);transition:border-color .12s;font-family:inherit}
+.field input,.field select{height:44px;padding:0 13px}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--accent)}
+.field textarea{resize:vertical;min-height:56px}
+.modal-foot{display:flex;justify-content:flex-end;gap:10px;padding:0 24px 22px}
+
+.img-uploader{display:flex;gap:14px;align-items:flex-start}
+.img-preview{width:104px;height:104px;border-radius:var(--r-lg);border:1.5px dashed var(--border-strong);background:var(--input);display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0;cursor:pointer}
+.img-preview:hover{border-color:var(--accent)}
+.img-preview img{width:100%;height:100%;object-fit:cover}
+.img-preview .ph{color:var(--faint);font-size:11px;text-align:center;line-height:1.6;padding:6px}
+.img-actions{display:flex;flex-direction:column;gap:8px;padding-top:4px}
+.img-actions span{font-size:11.5px;color:var(--faint)}
+.ds-box{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.ds-name{font-size:14px;color:var(--text);max-width:340px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ds-hint{font-size:12px;color:var(--faint);margin-top:6px}
+
+.big-view{position:fixed;inset:0;background:var(--mask-view);display:none;align-items:center;justify-content:center;z-index:200;cursor:zoom-out}
+.big-view.show{display:flex}
+.big-view img{max-width:88vw;max-height:88vh;border-radius:var(--r-lg)}
+
+.toast-wrap{position:fixed;top:20px;left:50%;transform:translateX(-50%);z-index:300;display:flex;flex-direction:column;gap:8px;align-items:center}
+.toast{padding:10px 20px;border-radius:var(--r-md);background:var(--panel2);border:1px solid var(--border-strong);color:var(--text);font-size:13px;animation:pop .2s ease}
+.toast.err{border-color:var(--red);color:var(--red)}
+.toast.ok{border-color:var(--green);color:var(--green)}
+
+@media(max-width:900px){#sidebar{width:200px}.form-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div id="app">
+  <!-- ===== 侧边栏 ===== -->
+  <aside id="sidebar">
+    <div class="logo">
+      <div><b data-i18n="app.name">RCL Studio</b></div>
+    </div>
+    <nav class="nav">
+      <button class="nav-btn active" data-view="overview" data-i18n="nav.overview">元器件总览</button>
+      <button class="nav-btn" data-view="stockin" data-i18n="nav.stockin">入库管理</button>
+      <button class="nav-btn" data-view="stockout" data-i18n="nav.stockout">出库管理</button>
+      <button class="nav-btn" data-view="logs" data-i18n="nav.logs">出入库记录</button>
+      <button class="nav-btn" data-view="bom" data-i18n="nav.bom">BOM 核对</button>
+      <button class="nav-btn" data-view="cats" data-i18n="nav.cats">分类管理</button>
+    </nav>
+    <div class="cat-title" data-i18n="side.cats">元器件分类</div>
+    <div id="catTree"></div>
+  </aside>
+
+  <!-- ===== 主区域 ===== -->
+  <main>
+    <div class="topbar">
+      <h1 id="pageTitle">元器件总览</h1>
+      <div class="spacer"></div>
+      <button class="btn" id="themeBtn">日间</button>
+      <button class="btn" id="langBtn">EN</button>
+      <button class="btn" id="importBtn" data-i18n="top.import">导入</button>
+      <button class="btn" id="exportBtn" data-i18n="top.export">导出</button>
+      <button class="btn primary" id="addBtn" data-i18n="top.add">＋ 新增元器件</button>
+      <input type="file" id="importFile" accept=".json" hidden>
+    </div>
+
+    <div class="content">
+      <!-- 统计卡片（仅总览页） -->
+      <div class="stats" id="statsRow">
+        <div class="stat"><div class="ic" style="background:var(--accent-soft);color:var(--accent)">▦</div><div><div class="num" id="stTypes">0</div><div class="lbl" data-i18n="stat.types">元器件型号数</div></div></div>
+        <div class="stat"><div class="ic" style="background:var(--green-soft);color:var(--green)">◈</div><div><div class="num" id="stStock">0</div><div class="lbl" data-i18n="stat.stock">库存总数量</div></div></div>
+        <div class="stat"><div class="ic" style="background:var(--purple-soft);color:var(--purple)">¥</div><div><div class="num" id="stValue">¥0</div><div class="lbl" data-i18n="stat.value">库存总价值</div></div></div>
+        <div class="stat warn"><div class="ic" style="background:var(--amber-soft);color:var(--amber)">⚠</div><div><div class="num" id="stLow">0</div><div class="lbl" data-i18n="stat.low">低库存预警</div></div></div>
+      </div>
+
+      <!-- ===== 页面1：元器件总览 ===== -->
+      <div class="panel" id="listPanel">
+        <div class="panel-head">
+          <h2 data-i18n="list.title">元器件列表</h2>
+          <span class="crumb" id="crumbText" data-i18n="tree.all">全部元器件</span>
+          <div class="spacer" style="flex:1"></div>
+          <div class="search-inline"><input id="searchInput" data-i18n-ph="search.ph" placeholder="搜索名称 / 型号 / 品牌 / 库位…"></div>
+          <select id="pkgFilter" data-i18n-title="pkg.title" title="按封装筛选"></select>
+          <select id="sortSelect">
+            <option value="updated" data-i18n="sort.updated">最近更新</option>
+            <option value="stockDesc" data-i18n="sort.stockDesc">库存：多 → 少</option>
+            <option value="stockAsc" data-i18n="sort.stockAsc">库存：少 → 多</option>
+            <option value="name" data-i18n="sort.name">名称 A → Z</option>
+          </select>
+        </div>
+        <div style="overflow-x:auto">
+          <table>
+            <thead><tr>
+              <th style="width:58px" data-i18n="th.photo">图片</th><th data-i18n="th.comp">元器件</th><th data-i18n="th.cat">分类</th><th data-i18n="th.pkg">封装</th>
+              <th data-i18n="th.stock">库存</th><th data-i18n="th.loc">库位</th><th data-i18n="th.price">单价</th><th style="width:225px" data-i18n="th.actions">操作</th>
+            </tr></thead>
+            <tbody id="compTbody"></tbody>
+          </table>
+          <div class="empty" id="listEmpty" hidden>
+            <div class="big">▤</div><div data-i18n="list.empty">暂无元器件，点击右上角「新增元器件」开始建库</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== 页面2/3：入库 / 出库 ===== -->
+      <div class="panel" id="stockPanel" hidden>
+        <div class="panel-head">
+          <h2 id="stockPanelTitle">入库管理</h2>
+          <span class="crumb" id="stockCrumb"></span>
+          <div class="spacer" style="flex:1"></div>
+          <div class="search-inline"><input id="siSearch" data-i18n-ph="stock.search.ph" placeholder="搜索名称 / 型号 / 库位…"></div>
+        </div>
+        <div class="filter-bar">
+          <span class="fb-label" data-i18n="fb.cat">分类筛选</span>
+          <select id="siParent"></select>
+          <select id="siChild"></select>
+          <span class="fb-label" style="margin-left:8px" data-i18n="fb.pkg">封装</span>
+          <select id="siPkg"></select>
+          <span class="crumb" id="siHint"></span>
+        </div>
+        <div style="overflow-x:auto">
+          <table>
+            <thead><tr>
+              <th style="width:58px" data-i18n="th.photo">图片</th><th data-i18n="th.comp">元器件</th><th data-i18n="th.cat">分类</th><th data-i18n="th.pkg">封装</th><th data-i18n="th.curstock">当前库存</th><th data-i18n="th.loc">库位</th>
+              <th id="qtyTh" style="width:110px">入库数量</th><th style="width:190px" data-i18n="th.note">备注</th><th style="width:100px" data-i18n="th.actions">操作</th>
+            </tr></thead>
+            <tbody id="stockTbody"></tbody>
+          </table>
+          <div class="empty" id="stockEmpty" hidden>
+            <div class="big">⌕</div><div id="stockEmptyText" data-i18n="stock.empty">没有匹配的元器件</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== 页面4：出入库记录 ===== -->
+      <div class="panel" id="logPanel" hidden>
+        <div class="panel-head">
+          <h2 data-i18n="log.title">出入库流水</h2>
+          <span class="crumb" id="logCrumb"></span>
+          <div class="spacer" style="flex:1"></div>
+          <select id="logFilter">
+            <option value="all" data-i18n="log.all">全部类型</option>
+            <option value="in" data-i18n="log.in">仅入库</option>
+            <option value="out" data-i18n="log.out">仅出库</option>
+          </select>
+        </div>
+        <div style="overflow-x:auto">
+          <table>
+            <thead><tr><th data-i18n="th.time">时间</th><th data-i18n="th.comp">元器件</th><th data-i18n="th.type">类型</th><th data-i18n="th.qty">数量</th><th data-i18n="th.balance">变动后库存</th><th data-i18n="th.note">备注</th></tr></thead>
+            <tbody id="logTbody"></tbody>
+          </table>
+          <div class="empty" id="logEmpty" hidden>
+            <div class="big">≡</div><div data-i18n="log.empty">暂无出入库记录</div>
+          </div>
+        </div>
+      </div>
+      <!-- ===== 页面5：BOM 核对 ===== -->
+      <div class="panel" id="bomPanel" hidden>
+        <div class="panel-head">
+          <h2 data-i18n="nav.bom">BOM 核对</h2>
+          <span class="crumb" id="bomCrumb" data-i18n="bom.crumb0">上传立创EDA导出的 BOM 表（.xlsx / .csv），与仓库库存比对</span>
+          <div class="spacer" style="flex:1"></div>
+          <span class="fb-label" data-i18n="bom.mult">生产套数</span>
+          <input id="bomMult" type="number" min="1" step="1" value="1">
+          <button class="btn primary" id="bomPickBtn" data-i18n="bom.pick">选择 BOM 文件</button>
+          <button class="btn green" id="bomInBtn" disabled data-i18n="bom.in">按 BOM 入库</button>
+          <button class="btn amber" id="bomOutBtn" disabled data-i18n="bom.out">按 BOM 出库</button>
+          <button class="btn" id="bomExportBtn" disabled data-i18n="bom.export0">导出缺料 BOM</button>
+          <input type="file" id="bomFile" accept=".xlsx,.csv" hidden>
+        </div>
+        <div class="bom-stats" id="bomStats" hidden></div>
+        <div style="overflow-x:auto">
+          <table id="bomTable" hidden>
+            <thead><tr>
+              <th style="width:50px">No.</th><th data-i18n="th.param">参数 / 型号</th><th data-i18n="th.pkg">封装</th><th data-i18n="th.des">位号</th>
+              <th data-i18n="th.req">需求</th><th data-i18n="th.match">匹配元器件</th><th data-i18n="th.stock">库存</th><th data-i18n="th.status">状态</th>
+            </tr></thead>
+            <tbody id="bomTbody"></tbody>
+          </table>
+          <div class="empty" id="bomEmpty">
+            <div class="big">⇪</div><div data-i18n="bom.empty">尚未上传 BOM 表，点击右上角「选择 BOM 文件」开始核对</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== 页面6：分类管理 ===== -->
+      <div class="panel" id="catPanel" hidden>
+        <div class="panel-head">
+          <h2 data-i18n="nav.cats">分类管理</h2>
+          <span class="crumb" data-i18n="cats.crumb">参照立创商城分类结构，可增删改、调整顺序，重命名会同步更新已有元器件</span>
+          <div class="spacer" style="flex:1"></div>
+          <button class="btn" id="catResetBtn" data-i18n="cats.reset">恢复默认分类</button>
+        </div>
+        <div class="catmgr">
+          <div class="cat-col">
+            <h3 data-i18n="cats.parents">一级分类</h3>
+            <div id="catParentList"></div>
+            <div class="cat-add"><input id="newParentName" data-i18n-ph="cats.newparent.ph" placeholder="新的一级分类名称…"><button class="btn primary" id="addParentBtn" data-i18n="cats.add">添加</button></div>
+          </div>
+          <div class="cat-col">
+            <h3><span data-i18n="cats.children">二级分类</span> <span class="crumb" id="catChildOf"></span></h3>
+            <div id="catChildList"></div>
+            <div class="cat-add"><input id="newChildName" data-i18n-ph="cats.newchild.ph" placeholder="新的二级分类名称…"><button class="btn primary" id="addChildBtn" data-i18n="cats.add">添加</button></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- ===== 新增/编辑弹窗 ===== -->
+<div class="modal-mask" id="editMask">
+  <div class="modal">
+    <div class="modal-head"><h3 id="editTitle">新增元器件</h3><button class="modal-close" data-close="editMask">✕</button></div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="field"><label><span data-i18n="m.name">元器件名称</span> <span class="req">*</span></label><input id="fName" data-i18n-ph="m.name.ph" placeholder="如：贴片电阻 10kΩ ±1%"></div>
+        <div class="field"><label data-i18n="m.model">型号 / 规格</label><input id="fModel" data-i18n-ph="m.model.ph" placeholder="如：RC0603FR-0710KL"></div>
+        <div class="field"><label><span data-i18n="m.parent">一级分类</span> <span class="req">*</span></label><select id="fParent"></select></div>
+        <div class="field"><label><span data-i18n="m.child">二级分类</span> <span class="req">*</span></label><select id="fChild"></select></div>
+        <div class="field"><label data-i18n="m.brand">品牌</label><input id="fBrand" data-i18n-ph="m.brand.ph" placeholder="如：YAGEO / 国巨"></div>
+        <div class="field"><label data-i18n="m.pkg">封装</label><input id="fPackage" data-i18n-ph="m.pkg.ph" placeholder="如：0603 / SOT-23 / DIP-8"></div>
+        <div class="field"><label><span data-i18n="m.stock">初始库存</span> <span class="req">*</span></label><input id="fStock" type="number" min="0" step="1" value="0"></div>
+        <div class="field"><label data-i18n="m.minstock">低库存阈值</label><input id="fMinStock" type="number" min="0" step="1" value="10"></div>
+        <div class="field"><label data-i18n="m.loc">库位</label><input id="fLocation" data-i18n-ph="m.loc.ph" placeholder="如：A-01-03"></div>
+        <div class="field"><label data-i18n="m.price">单价 (¥)</label><input id="fPrice" type="number" min="0" step="0.0001" placeholder="0.00"></div>
+        <div class="field full"><label data-i18n="m.supplier">供应商 / 商品编号</label><input id="fSupplier" data-i18n-ph="m.supplier.ph" placeholder="如：立创商城 C25804"></div>
+        <div class="field full">
+          <label data-i18n="m.image">元器件图片</label>
+          <div class="img-uploader">
+            <div class="img-preview" id="imgPreview"><div class="ph" data-i18n-html="m.imgph">点击上传<br>或拖拽图片到此</div></div>
+            <div class="img-actions">
+              <button type="button" class="btn sm" id="pickImgBtn" data-i18n="m.pickimg">选择图片</button>
+              <button type="button" class="btn sm red" id="removeImgBtn" hidden data-i18n="m.rmimg">移除图片</button>
+              <span data-i18n="m.imghint">支持 JPG / PNG，自动压缩存储</span>
+            </div>
+          </div>
+          <input type="file" id="imgInput" accept="image/*" hidden>
+        </div>
+        <div class="field full">
+          <label data-i18n="m.ds">数据手册 (Datasheet)</label>
+          <div class="ds-box">
+            <button type="button" class="btn sm" id="pickDsBtn" data-i18n="ds.pick">选择文件</button>
+            <span class="ds-name" id="dsName" data-i18n="ds.none">未上传</span>
+            <button type="button" class="btn sm" id="openDsBtn" hidden data-i18n="ds.open">打开</button>
+            <button type="button" class="btn sm red" id="removeDsBtn" hidden data-i18n="ds.remove">移除</button>
+          </div>
+          <div class="ds-hint" data-i18n="ds.hint">支持 PDF / Word / Excel / 压缩包等，单个文件不超过 20MB，随元件保存在本地数据库</div>
+          <input type="file" id="dsInput" accept=".pdf,.doc,.docx,.xls,.xlsx,.txt,.csv,.zip,.rar,.7z,.png,.jpg,.jpeg" hidden>
+        </div>
+        <div class="field full"><label data-i18n="m.desc">备注描述</label><textarea id="fDesc" data-i18n-ph="m.desc.ph" placeholder="参数说明、采购链接、替代型号等"></textarea></div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn" data-close="editMask" data-i18n="btn.cancel">取消</button>
+      <button class="btn primary" id="saveCompBtn" data-i18n="btn.save">保存</button>
+    </div>
+  </div>
+</div>
+
+<!-- 大图预览 -->
+<div class="big-view" id="bigView"><img id="bigImg" alt=""></div>
+<div class="toast-wrap" id="toastWrap"></div>
+
+<script>
+'use strict';
+/* ================= 立创商城风格分类（默认结构） ================= */
+const DEFAULT_CATEGORIES = {
+  '无源元件': ['贴片电阻','直插电阻','精密电阻','排阻','电位器/可调电阻','热敏电阻','陶瓷电容','电解电容','钽电容','薄膜电容','安规电容','超级电容','功率电感','叠层电感','磁珠','变压器','晶体谐振器','晶体振荡器','滤波器'],
+  '分立器件': ['整流二极管','开关二极管','稳压二极管','肖特基二极管','TVS二极管','三极管(BJT)','MOS管(MOSFET)','IGBT','晶闸管','达林顿管'],
+  '集成电路(IC)': ['单片机(MCU)','电源管理IC','DC-DC芯片','LDO稳压器','运算放大器','比较器','逻辑芯片','存储器','接口芯片','驱动芯片','ADC/DAC','时钟/定时器','射频/无线芯片','音频芯片','电压基准'],
+  '连接器/接插件': ['排针/排母','XH/PH端子','USB连接器','Type-C连接器','板对板连接器','线对板连接器','FPC/FFC连接器','接线端子','卡座','DC电源座'],
+  '机电元件': ['轻触开关','拨码开关','拨动开关','按键开关','旋转编码器','继电器','蜂鸣器','扬声器','麦克风'],
+  '光电器件与显示': ['发光二极管(LED)','数码管','LCD显示屏','OLED显示屏','光电耦合器','红外收发管','光敏电阻','激光二极管'],
+  '传感器': ['温度传感器','湿度传感器','压力传感器','加速度计','陀螺仪','霍尔传感器','光照传感器','气体传感器','距离传感器'],
+  '保护器件': ['保险丝','自恢复保险丝(PTC)','压敏电阻(MOV)','ESD抑制器','气体放电管'],
+  '电源与模块': ['电池','电池座/扣','AC-DC模块','DC-DC模块','电源模块','开发板/核心板'],
+  '辅料与工具': ['PCB/洞洞板','散热片','导线/线缆','天线','焊锡/助焊剂','外壳/结构件','螺丝/铜柱']
+};
+function loadCategories(){
+  try{
+    const s = localStorage.getItem('cw_categories');
+    if(s){ const o = JSON.parse(s); if(o && typeof o==='object' && !Array.isArray(o) && Object.keys(o).length) return o; }
+  }catch(e){}
+  return JSON.parse(JSON.stringify(DEFAULT_CATEGORIES));
+}
+function saveCategories(){ localStorage.setItem('cw_categories', JSON.stringify(CATEGORIES)); }
+let CATEGORIES = loadCategories();
+
+/* ================= IndexedDB 存储层 ================= */
+let _db = null;
+function openDB(){
+  return new Promise((resolve,reject)=>{
+    const req = indexedDB.open('component-warehouse', 1);
+    req.onupgradeneeded = e=>{
+      const d = e.target.result;
+      if(!d.objectStoreNames.contains('components')) d.createObjectStore('components',{keyPath:'id'});
+      if(!d.objectStoreNames.contains('transactions')) d.createObjectStore('transactions',{keyPath:'id'});
+    };
+    req.onsuccess = ()=>resolve(req.result);
+    req.onerror = ()=>reject(req.error);
+  });
+}
+const dbAll = store => new Promise((res,rej)=>{
+  const r = _db.transaction(store).objectStore(store).getAll();
+  r.onsuccess = ()=>res(r.result||[]); r.onerror = ()=>rej(r.error);
+});
+const dbPut = (store,val)=> new Promise((res,rej)=>{
+  const t=_db.transaction(store,'readwrite'); t.objectStore(store).put(val);
+  t.oncomplete=res; t.onerror=()=>rej(t.error);
+});
+const dbDel = (store,key)=> new Promise((res,rej)=>{
+  const t=_db.transaction(store,'readwrite'); t.objectStore(store).delete(key);
+  t.oncomplete=res; t.onerror=()=>rej(t.error);
+});
+const dbClear = store=> new Promise((res,rej)=>{
+  const t=_db.transaction(store,'readwrite'); t.objectStore(store).clear();
+  t.oncomplete=res; t.onerror=()=>rej(t.error);
+});
+
+/* ================= 全局状态 ================= */
+let components = [], transactions = [];
+let view = 'overview';          // overview | stockin | stockout | logs
+let activeParent = null, activeChild = null;
+let expanded = new Set();
+let searchTerm = '', sortMode = 'updated', logFilter = 'all';
+let siParent = '', siChild = '', siSearch = '', siPkg = '';  // 入库/出库页筛选
+let pkgFilter = '';                                          // 总览页封装筛选
+let editingId = null, editingImage = null, editingDatasheet = null;
+let pendingFocusId = null;      // 跳转后聚焦数量框
+let bomRows = null, bomFileName = '', bomMult = 1;   // BOM 核对
+
+/* ================= 工具函数 ================= */
+const $ = id => document.getElementById(id);
+const uid = ()=> Date.now().toString(36) + Math.random().toString(36).slice(2,8);
+const esc = s => String(s??'').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fmtNum = n => Number(n||0).toLocaleString(LANG==='en'?'en-US':'zh-CN');
+const fmtMoney = n => '¥' + Number(n||0).toLocaleString(LANG==='en'?'en-US':'zh-CN',{maximumFractionDigits:2});
+const fmtTime = t => { const d=new Date(t); const p=x=>String(x).padStart(2,'0');
+  return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}`; };
+function toast(msg, type){
+  const el = document.createElement('div');
+  el.className = 'toast' + (type ? ' '+type : '');
+  el.textContent = msg;
+  $('toastWrap').appendChild(el);
+  setTimeout(()=>{ el.style.opacity='0'; el.style.transition='.3s'; setTimeout(()=>el.remove(),320); }, 2200);
+}
+const PALETTE = ['#4c8dff','#8b5cf6','#ec4899','#f97316','#06b6d4','#3ecf8e','#a3e635','#f0a838','#f0665c','#6366f1','#14b8a6'];
+function placeholderImg(name, parent){
+  let h = 0; for(const c of String(parent||'')) h = (h*31 + c.charCodeAt(0)) >>> 0;
+  const color = PALETTE[h % PALETTE.length];
+  const phBg = getComputedStyle(document.documentElement).getPropertyValue('--ph-bg').trim() || '#151b25';
+  const phText = getComputedStyle(document.documentElement).getPropertyValue('--ph-text').trim() || '#0a0e14';
+  const txt = esc(String(name||'?').slice(0,2));
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="88" height="88"><rect width="88" height="88" rx="20" fill="${phBg}"/><rect x="12" y="28" width="64" height="32" rx="10" fill="${color}"/><rect x="2" y="40" width="10" height="4" rx="2" fill="${color}88"/><rect x="76" y="40" width="10" height="4" rx="2" fill="${color}88"/><text x="44" y="49" text-anchor="middle" font-size="14" fill="${phText}" font-family="sans-serif" font-weight="bold">${txt}</text></svg>`;
+  return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
+}
+function processImage(file){
+  return new Promise((resolve,reject)=>{
+    if(!file.type.startsWith('image/')) return reject(new Error(T('err.notimage')));
+    const reader = new FileReader();
+    reader.onload = e=>{
+      const img = new Image();
+      img.onload = ()=>{
+        const max = 720;
+        let w = img.width, h = img.height;
+        if(Math.max(w,h) > max){ const s = max/Math.max(w,h); w=Math.round(w*s); h=Math.round(h*s); }
+        const cv = document.createElement('canvas');
+        cv.width=w; cv.height=h;
+        cv.getContext('2d').drawImage(img,0,0,w,h);
+        resolve(cv.toDataURL('image/jpeg', 0.85));
+      };
+      img.onerror = ()=>reject(new Error(T('err.imgparse')));
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+/* ================= 多语言（中文 / English） ================= */
+let LANG = localStorage.getItem('cw_lang') || 'zh';
+let THEME = localStorage.getItem('cw_theme') || 'dark';
+const I18N = {
+  'app.title':['RCL Studio','RCL Studio'],
+  'app.name':['RCL Studio','RCL Studio'],
+  'nav.overview':['元器件总览','Overview'],
+  'nav.stockin':['入库管理','Stock In'],
+  'nav.stockout':['出库管理','Stock Out'],
+  'nav.logs':['出入库记录','Transactions'],
+  'nav.bom':['BOM 核对','BOM Check'],
+  'nav.cats':['分类管理','Categories'],
+  'side.cats':['元器件分类','Categories'],
+  'theme.toLight':['日间','Light'],
+  'theme.toDark':['夜间','Dark'],
+  'top.import':['导入','Import'],
+  'top.export':['导出','Export'],
+  'top.add':['＋ 新增元器件','+ Add Component'],
+  'stat.types':['元器件型号数','Component Types'],
+  'stat.stock':['库存总数量','Total Stock'],
+  'stat.value':['库存总价值','Stock Value'],
+  'stat.low':['低库存预警','Low Stock Alert'],
+  'list.title':['元器件列表','Component List'],
+  'search.ph':['搜索名称 / 型号 / 品牌 / 库位…','Search name / model / brand / location…'],
+  'pkg.title':['按封装筛选','Filter by package'],
+  'pkg.all':['全部封装','All Packages'],
+  'sort.updated':['最近更新','Recently Updated'],
+  'sort.stockDesc':['库存：多 → 少','Stock: High → Low'],
+  'sort.stockAsc':['库存：少 → 多','Stock: Low → High'],
+  'sort.name':['名称 A → Z','Name A → Z'],
+  'th.photo':['图片','Photo'],
+  'th.comp':['元器件','Component'],
+  'th.cat':['分类','Category'],
+  'th.pkg':['封装','Package'],
+  'th.stock':['库存','Stock'],
+  'th.loc':['库位','Location'],
+  'th.price':['单价','Price'],
+  'th.actions':['操作','Actions'],
+  'th.curstock':['当前库存','Current Stock'],
+  'th.qtyin':['入库数量','In Qty'],
+  'th.qtyout':['出库数量','Out Qty'],
+  'th.note':['备注','Note'],
+  'th.time':['时间','Time'],
+  'th.type':['类型','Type'],
+  'th.qty':['数量','Qty'],
+  'th.balance':['变动后库存','Balance'],
+  'th.param':['参数 / 型号','Spec / Model'],
+  'th.des':['位号','Designators'],
+  'th.req':['需求','Required'],
+  'th.match':['匹配元器件','Matched Component'],
+  'th.status':['状态','Status'],
+  'list.empty':['暂无元器件，点击右上角「新增元器件」开始建库','No components yet. Click "+ Add Component" in the top right to start.'],
+  'stock.search.ph':['搜索名称 / 型号 / 库位…','Search name / model / location…'],
+  'fb.cat':['分类筛选','Category'],
+  'fb.pkg':['封装','Package'],
+  'stock.empty':['没有匹配的元器件','No matching components'],
+  'log.title':['出入库流水','Transaction Log'],
+  'log.all':['全部类型','All Types'],
+  'log.in':['仅入库','In Only'],
+  'log.out':['仅出库','Out Only'],
+  'log.empty':['暂无出入库记录','No transactions yet'],
+  'bom.crumb0':['上传立创EDA导出的 BOM 表（.xlsx / .csv），与仓库库存比对','Upload a BOM exported from LCSC EDA (.xlsx / .csv) to compare with warehouse stock'],
+  'bom.mult':['生产套数','Sets'],
+  'bom.pick':['选择 BOM 文件','Select BOM File'],
+  'bom.in':['按 BOM 入库','Stock In by BOM'],
+  'bom.out':['按 BOM 出库','Stock Out by BOM'],
+  'bom.export0':['导出缺料 BOM','Export Shortage BOM'],
+  'bom.empty':['尚未上传 BOM 表，点击右上角「选择 BOM 文件」开始核对','No BOM uploaded yet. Click "Select BOM File" to start checking.'],
+  'cats.crumb':['参照立创商城分类结构，可增删改、调整顺序，重命名会同步更新已有元器件','Based on the LCSC Mall structure. Add, delete, rename or reorder; renaming syncs existing components.'],
+  'cats.reset':['恢复默认分类','Reset to Default'],
+  'cats.parents':['一级分类','Primary Categories'],
+  'cats.children':['二级分类','Subcategories'],
+  'cats.newparent.ph':['新的一级分类名称…','New primary category name…'],
+  'cats.newchild.ph':['新的二级分类名称…','New subcategory name…'],
+  'cats.add':['添加','Add'],
+  'm.name':['元器件名称','Component Name'],
+  'm.name.ph':['如：贴片电阻 10kΩ ±1%','e.g. Chip Resistor 10kΩ ±1%'],
+  'm.model':['型号 / 规格','Model / Spec'],
+  'm.model.ph':['如：RC0603FR-0710KL','e.g. RC0603FR-0710KL'],
+  'm.parent':['一级分类','Primary Category'],
+  'm.child':['二级分类','Subcategory'],
+  'm.brand':['品牌','Brand'],
+  'm.brand.ph':['如：YAGEO / 国巨','e.g. YAGEO'],
+  'm.pkg':['封装','Package'],
+  'm.pkg.ph':['如：0603 / SOT-23 / DIP-8','e.g. 0603 / SOT-23 / DIP-8'],
+  'm.stock':['初始库存','Initial Stock'],
+  'm.minstock':['低库存阈值','Low Stock Threshold'],
+  'm.loc':['库位','Location'],
+  'm.loc.ph':['如：A-01-03','e.g. A-01-03'],
+  'm.price':['单价 (¥)','Unit Price (¥)'],
+  'm.supplier':['供应商 / 商品编号','Supplier / Part No.'],
+  'm.supplier.ph':['如：立创商城 C25804','e.g. LCSC C25804'],
+  'm.image':['元器件图片','Component Image'],
+  'm.imgph':['点击上传<br>或拖拽图片到此','Click to upload<br>or drag & drop an image'],
+  'm.pickimg':['选择图片','Choose Image'],
+  'm.rmimg':['移除图片','Remove'],
+  'm.imghint':['支持 JPG / PNG，自动压缩存储','JPG / PNG supported, compressed automatically'],
+  'm.ds':['数据手册 (Datasheet)','Datasheet'],
+  'ds.pick':['选择文件','Choose File'],
+  'ds.none':['未上传','Not uploaded'],
+  'ds.open':['打开','Open'],
+  'ds.remove':['移除','Remove'],
+  'ds.hint':['支持 PDF / Word / Excel / 压缩包等，单个文件不超过 20MB，随元件保存在本地数据库','PDF / Word / Excel / archives supported, max 20MB per file, stored locally with the component'],
+  'm.desc':['备注描述','Description'],
+  'm.desc.ph':['参数说明、采购链接、替代型号等','Specs, purchase links, alternative models, etc.'],
+  'btn.cancel':['取消','Cancel'],
+  'btn.save':['保存','Save'],
+  'btn.ok':['确定','OK'],
+  'btn.rename':['重命名','Rename'],
+  'btn.del':['删除','Delete'],
+  'btn.edit':['编辑','Edit'],
+  'btn.in':['入库','In'],
+  'btn.out':['出库','Out'],
+  'btn.ds':['手册','Datasheet'],
+  'btn.up':['上移','Move up'],
+  'btn.down':['下移','Move down'],
+  'tree.all':['全部元器件','All Components'],
+  'n.items':['{0} 项','{0} items'],
+  'badge.low':['低库存','Low'],
+  'badge.in':['↓ 入库','↓ In'],
+  'badge.out':['↑ 出库','↑ Out'],
+  'badge.ok':['充足','OK'],
+  'badge.short':['缺 {0}','Short {0}'],
+  'badge.nm':['未匹配','No Match'],
+  'comp.deleted':['（已删除）','(Deleted)'],
+  'si.allparent':['全部一级分类','All Primary Categories'],
+  'si.allchild':['全部二级分类','All Subcategories'],
+  'stock.allcats':['全部分类','All Categories'],
+  'hint.in':['选择元器件，填写数量后确认入库','Select a component, enter a quantity and confirm stock-in'],
+  'hint.out':['出库数量不能超过当前库存','Stock-out quantity cannot exceed current stock'],
+  'note.ph.in':['采购单号 / 来源…','PO No. / Source…'],
+  'note.ph.out':['用途 / 领料人…','Purpose / Recipient…'],
+  'word.in':['入库','Stock In'],
+  'word.out':['出库','Stock Out'],
+  'log.count':['共 {0} 条','{0} records'],
+  'cats.cnt2':['{0} 个子类 · {1} 个元件','{0} subcategories · {1} items'],
+  'cats.cnt':['{0} 个元件','{0} items'],
+  'cats.of':['（{0}）','({0})'],
+  'cats.empty.p':['暂无一级分类，请在下方添加','No primary categories yet. Add one below.'],
+  'cats.empty.c0':['请先添加并选择一级分类','Add and select a primary category first'],
+  'cats.empty.c':['该分类下暂无二级分类，请在下方添加','No subcategories here yet. Add one below.'],
+  'cat.dup.parent':['已存在同名一级分类','A primary category with this name already exists'],
+  'cat.dup.parent2':['该一级分类已存在','Primary category already exists'],
+  'cat.dup.child':['该二级分类已存在','Subcategory already exists'],
+  'cat.dup.child2':['该一级分类下已存在同名二级分类','This subcategory already exists under the primary category'],
+  'cat.name.req':['请输入分类名称','Please enter a category name'],
+  'cat.sel.req':['请先在左侧选择一级分类','Select a primary category on the left first'],
+  'cat.renamed':['已重命名为「{0}」，同步更新 {1} 个元器件','Renamed to "{0}"; {1} components updated'],
+  'cat.added':['已添加一级分类「{0}」','Added primary category "{0}"'],
+  'cat.child.added':['已在「{0}」下添加「{1}」','Added "{1}" under "{0}"'],
+  'cat.del.blocked':['「{0}」下还有 {1} 个元器件，请先把它们改归其他分类再删除','"{0}" still has {1} components. Reassign them before deleting.'],
+  'cat.del.confirm.p':['确定删除一级分类「{0}」及其 {1} 个二级分类吗？','Delete primary category "{0}" and its {1} subcategories?'],
+  'cat.del.confirm.c':['确定删除二级分类「{0}」吗？','Delete subcategory "{0}"?'],
+  'cat.deleted':['已删除分类','Category deleted'],
+  'cat.reset.confirm':['恢复为内置的立创商城分类结构？\n你自定义的分类将被移除（元器件数据保留，但其分类若不存在于默认结构中，需在编辑时重新归类）。','Restore the built-in LCSC Mall category structure?\nYour custom categories will be removed (component data is kept; components whose category is not in the default structure must be re-assigned when editing).'],
+  'cat.reset.done':['已恢复默认分类','Default categories restored'],
+  'err.xlsx.support':['当前浏览器不支持解析 xlsx，请另存为 CSV 后上传','This browser cannot parse xlsx; please save as CSV and upload'],
+  'err.xlsx.invalid':['不是有效的 xlsx 文件','Not a valid xlsx file'],
+  'err.xlsx.sheet':['未找到工作表数据','Worksheet data not found'],
+  'err.bom.header':['未识别到 BOM 表头（需要 Quantity / Comment / Supplier Part 等列）','BOM header not recognized (Quantity / Comment / Supplier Part columns required)'],
+  'err.bom.empty':['BOM 表为空','The BOM is empty'],
+  'via.lcsc':['LCSC编号','LCSC No.'],
+  'via.mfr':['制造商型号','Mfr Part'],
+  'via.value':['参数值','Value'],
+  'via.value.pkg':['参数值(封装不一致)','Value (package mismatch)'],
+  'chip.ok':['库存充足','Sufficient'],
+  'chip.short':['库存不足','Insufficient'],
+  'chip.nm':['未匹配','Unmatched'],
+  'chip.buy':['待采购项','To Purchase'],
+  'bom.crumb':['{0} · 共 {1} 项 · 按 {2} 套计算','{0} · {1} items · {2} sets'],
+  'bom.export.n':['导出缺料 BOM（{0} 项）','Export Shortage BOM ({0})'],
+  'bom.parsed':['已解析 {0} 项，其中 {1} 项库存充足','Parsed {0} items; {1} fully in stock'],
+  'bom.parsefail':['解析失败：','Parse failed: '],
+  'bom.filename':['缺料BOM','Shortage_BOM'],
+  'bom.exported':['已导出缺料 BOM（{0} 项）','Exported shortage BOM ({0} items)'],
+  'bom.none':['没有可{0}的匹配项','No matched items available for {0}'],
+  'bom.skipmsg':['\n跳过 {0} 项（{1}）','\nSkipped {0} items ({1})'],
+  'skip.in':['未匹配到仓库元器件','no matching warehouse component'],
+  'skip.out':['库存不足或未匹配','insufficient stock or unmatched'],
+  'bom.confirm':['将按 BOM「{0}」对 {1} 个元器件执行{2}（需求数量 × {3} 套）{4}\n确定继续？','Apply {2} to {1} components per BOM "{0}" (required qty × {3} sets){4}\nContinue?'],
+  'note.bomin':['采购入库',' purchase stock-in'],
+  'note.bomout':['焊接出库',' soldering stock-out'],
+  'sets':['套',' sets'],
+  'bom.done':['BOM{0}完成：{1} 个元器件已{0}{2}','BOM {0} done: {1} components processed{2}'],
+  'bom.skipped':['，跳过 {0} 项',', {0} skipped'],
+  'qty.invalid':['请输入有效数量','Please enter a valid quantity'],
+  'qty.exceed':['出库数量超过当前库存（{0}）','Stock-out quantity exceeds current stock ({0})'],
+  'stock.done':['{0}成功，「{1}」当前库存 {2}','{0} successful. "{1}" current stock: {2}'],
+  'comp.del.confirm':['确定删除「{0}」吗？\n其出入库记录将保留。','Delete "{0}"?\nIts transaction records will be kept.'],
+  'comp.deleted.toast':['已删除','Deleted'],
+  'err.notimage':['不是图片文件','Not an image file'],
+  'err.imgparse':['图片解析失败','Failed to parse image'],
+  'err.imgfail':['图片处理失败','Image processing failed'],
+  'ds.toobig':['文件超过 20MB，无法保存','File exceeds 20MB and cannot be saved'],
+  'ds.ready':['数据手册已就绪，保存后生效','Datasheet ready; takes effect after saving'],
+  'ds.readfail':['文件读取失败','Failed to read file'],
+  'm.edit':['编辑元器件','Edit Component'],
+  'm.add':['新增元器件','Add Component'],
+  'm.name.req':['请填写元器件名称','Please enter the component name'],
+  'm.saved':['已保存修改','Changes saved'],
+  'm.added':['已新增元器件','Component added'],
+  'note.init':['初始入库','Initial stock-in'],
+  'backup.name':['元器件仓库备份','component-warehouse-backup'],
+  'backup.done':['已导出备份文件','Backup file exported'],
+  'imp.badformat':['文件格式不正确','Invalid file format'],
+  'imp.confirm':['导入将覆盖现有数据（{0} 个元器件、{1} 条流水），确定继续？','Import will overwrite existing data ({0} components, {1} transactions). Continue?'],
+  'imp.done':['导入成功','Import successful'],
+  'imp.fail':['导入失败：','Import failed: '],
+  'ex.req':['需求数量','Required Qty'],
+  'ex.stock':['库存数量','In Stock'],
+  'ex.short':['缺口数量','Shortage Qty'],
+  'ex.match':['匹配元器件','Matched Component'],
+  'ex.via':['匹配方式','Match By'],
+};
+function T(key){
+  const v = I18N[key];
+  if(!v) return key;
+  return LANG==='en' ? v[1] : v[0];
+}
+function TF(key, ...args){ return T(key).replace(/\{(\d+)\}/g, (m,i)=> args[+i]!==undefined ? args[+i] : m); }
+function applyLang(){
+  applyTheme();
+  document.documentElement.lang = LANG==='en' ? 'en' : 'zh-CN';
+  document.title = T('app.title');
+  $('langBtn').textContent = LANG==='en' ? '中文' : 'EN';
+  document.querySelectorAll('[data-i18n]').forEach(el=>{ el.textContent = T(el.dataset.i18n); });
+  document.querySelectorAll('[data-i18n-ph]').forEach(el=>{ el.placeholder = T(el.dataset.i18nPh); });
+  document.querySelectorAll('[data-i18n-html]').forEach(el=>{ el.innerHTML = T(el.dataset.i18nHtml); });
+  document.querySelectorAll('[data-i18n-title]').forEach(el=>{ el.title = T(el.dataset.i18nTitle); });
+  $('pageTitle').textContent = T(VIEW_TITLE_KEYS[view]);
+  renderAll(); renderBom();
+}
+$('langBtn').addEventListener('click', ()=>{
+  LANG = LANG==='zh' ? 'en' : 'zh';
+  localStorage.setItem('cw_lang', LANG);
+  applyLang();
+});
+
+/* ================= 主题（日间/夜间） ================= */
+function applyTheme(){
+  document.documentElement.dataset.theme = THEME;
+  $('themeBtn').textContent = THEME==='dark' ? T('theme.toLight') : T('theme.toDark');
+}
+$('themeBtn').addEventListener('click', ()=>{
+  THEME = THEME==='dark' ? 'light' : 'dark';
+  localStorage.setItem('cw_theme', THEME);
+  applyTheme();
+  renderList(); renderStock(); // 重新绘制主题相关的占位图
+});
+
+/* ================= Demo 演示数据 ================= */
+const DEMO_VERSION = 3;
+const DEMO = [
+ // 无源元件
+ ['贴片电阻 10kΩ ±1%','RC0603FR-0710KL','无源元件','贴片电阻','YAGEO/国巨','0603',4500,500,'A-01-01',0.0045,'C25804','1/10W，常用上拉/分压电阻'],
+ ['贴片电阻 4.7kΩ ±1%','RC0603FR-074K7L','无源元件','贴片电阻','YAGEO/国巨','0603',3800,500,'A-01-02',0.0045,'C25917','1/10W 通用阻值'],
+ ['直插电阻 1kΩ ±5%','CF1/4W-1K','无源元件','直插电阻','国产','插件 DIP',2000,300,'A-01-03',0.01,'C44154','1/4W 碳膜电阻'],
+ ['陶瓷电容 100nF 50V','CL10B104KB8NNNC','无源元件','陶瓷电容','SAMSUNG/三星','0603',3200,500,'A-01-05',0.008,'C1525','X7R 去耦电容'],
+ ['陶瓷电容 10µF 25V','CL21A106KAYNNNE','无源元件','陶瓷电容','SAMSUNG/三星','0805',1500,300,'A-01-06',0.02,'C15850','X5R 电源滤波'],
+ ['电解电容 470µF 25V','470µF/25V 8×12','无源元件','电解电容','AiSHi/艾华','插件 8×12',260,50,'A-02-01',0.35,'C69389','电源滤波 105℃'],
+ ['钽电容 22µF 16V','TAJA226M016RNJ','无源元件','钽电容','AVX','3216(A型)',180,40,'A-02-03',0.55,'C14295','低ESR 滤波'],
+ ['功率电感 10µH 2A','SWPA6045S100MT','无源元件','功率电感','Sunlord/顺络','6045',220,50,'A-03-01',0.18,'C99268','DC-DC 功率电感'],
+ ['磁珠 600Ω@100MHz','GZ1608D601TF','无源元件','磁珠','Sunlord/顺络','0603',2600,500,'A-03-02',0.012,'C1015','电源/信号 EMI 抑制'],
+ ['无源晶振 8MHz ±20ppm','X49SM8MSD2SC','无源元件','晶体谐振器','YXC/扬兴','HC-49S',150,30,'A-04-01',0.45,'C9001','HC-49S 直插'],
+ ['有源晶振 25MHz 3.3V','OT322525MJBA4SL','无源元件','晶体振荡器','YXC/扬兴','3225',60,15,'A-04-02',1.2,'C19355','四脚贴片 有源'],
+ // 分立器件
+ ['开关二极管 1N4148W','1N4148W','分立器件','开关二极管','CJ/长电','SOD-123',800,200,'B-01-01',0.03,'C81598','100V 150mA 高速开关'],
+ ['肖特基二极管 SS34','SS34','分立器件','肖特基二极管','MDD/辰达','SMA',950,200,'B-01-02',0.06,'C8678','40V 3A 低正向压降'],
+ ['整流二极管 1N4007','1N4007','分立器件','整流二极管','CJ/长电','DO-41',500,100,'B-01-03',0.04,'C2898','1000V 1A 通用整流'],
+ ['稳压二极管 5.1V','BZT52C5V1','分立器件','稳压二极管','CJ/长电','SOD-123',430,100,'B-01-04',0.02,'C9504','0.5W 稳压'],
+ ['TVS二极管 SMBJ5.0A','SMBJ5.0A','分立器件','TVS二极管','JJW/捷捷微','SMB',300,80,'B-01-05',0.12,'C3961','600W 瞬态抑制'],
+ ['NPN三极管 SS8050','SS8050','分立器件','三极管(BJT)','CJ/长电','SOT-23',1200,300,'B-02-01',0.025,'C2150','25V 1.5A 大电流'],
+ ['N沟道MOS管 AO3400','AO3400A','分立器件','MOS管(MOSFET)','AOS','SOT-23',640,150,'B-02-02',0.08,'C20917','30V 5.7A 低内阻'],
+ ['N沟道MOS管 IRF540N','IRF540N','分立器件','MOS管(MOSFET)','Infineon','TO-220',85,20,'B-02-03',1.6,'C2956','100V 33A 功率管'],
+ // 集成电路
+ ['STM32F103C8T6 单片机','STM32F103C8T6','集成电路(IC)','单片机(MCU)','ST/意法','LQFP-48',36,10,'C-01-01',8.5,'C8323','ARM Cortex-M3 72MHz 64KB Flash'],
+ ['ESP32-WROOM-32E 模组','ESP32-WROOM-32E-N4','集成电路(IC)','射频/无线芯片','Espressif/乐鑫','Module 38Pin',6,8,'C-01-02',14.5,'C82899','WiFi+蓝牙 双核 240MHz'],
+ ['USB转串口 CH340G','CH340G','集成电路(IC)','接口芯片','WCH/沁恒','SOP-16',85,20,'C-02-01',2.2,'C8465','USB转TTL 全速'],
+ ['LDO稳压器 AMS1117-3.3','AMS1117-3.3','集成电路(IC)','LDO稳压器','UMW/友台','SOT-223',320,80,'C-02-02',0.12,'C6186','1A 低压差 3.3V输出'],
+ ['DC-DC降压 MP1584EN','MP1584EN','集成电路(IC)','DC-DC芯片','MPS/芯源','SOP-8',95,20,'C-02-05',0.9,'C55730','28V 3A 同步整流'],
+ ['运算放大器 LM358','LM358DR','集成电路(IC)','运算放大器','TI/德州仪器','SOP-8',150,30,'C-02-03',0.35,'C7950','双运放 通用型'],
+ ['移位寄存器 74HC595','74HC595D','集成电路(IC)','逻辑芯片','Nexperia/安世','SOP-16',200,50,'C-02-04',0.28,'C5947','8位串入并出'],
+ ['EEPROM AT24C02','AT24C02D-SSHM','集成电路(IC)','存储器','Microchip','SOP-8',260,50,'C-02-06',0.15,'C4993','2Kbit I2C 存储'],
+ ['电压基准 TL431','TL431','集成电路(IC)','电压基准','TI/德州仪器','SOT-23',300,60,'C-02-07',0.08,'C7443','可调精密基准 2.5V'],
+ // 连接器
+ ['单排针 2.54mm 1×40P','2.54-1×40P 直针','连接器/接插件','排针/排母','BOOMELE/博穆','插件 2.54',300,50,'D-01-01',0.18,'C2337','可掰断 镀金'],
+ ['Type-C母座 16Pin','TYPE-C-31-M-12','连接器/接插件','Type-C连接器','HRO/韩荣','SMD 卧贴',120,30,'D-01-02',0.35,'C165948','USB2.0 四脚插板'],
+ ['XH2.54 4P 直针座','XH-4A','连接器/接插件','XH/PH端子','CJT/长江连接器','插件 2.54',400,100,'D-01-03',0.06,'C9971','带扣 线对板'],
+ ['PH2.0 2P 针座','PH-2A','连接器/接插件','XH/PH端子','CJT/长江连接器','插件 2.0',350,100,'D-01-04',0.05,'C11534','小间距 线对板'],
+ ['USB-A 母座 90°','USB-A母 90度弯脚','连接器/接插件','USB连接器','HRO/韩荣','插件',80,20,'D-01-05',0.3,'C77892','卧式插板'],
+ // 机电元件
+ ['轻触开关 6×6×5mm','TS-1187A-C-C-B','机电元件','轻触开关','HRO/韩荣','插件 DIP',900,200,'E-01-01',0.04,'C2214','四脚 260gf'],
+ ['继电器 HF32F-G 5V','HF32F-G/005-HSL','机电元件','继电器','Hongfa/宏发','插件 DIP',60,15,'E-01-02',1.8,'C9898','10A 250VAC 常开'],
+ ['有源蜂鸣器 5V','TMB09A05','机电元件','蜂鸣器','国产','插件 9×5.5',110,25,'E-01-03',0.65,'C96093','电磁式 一体 5V驱动'],
+ ['旋转编码器 EC11','EC11E15244G1','机电元件','旋转编码器','Kailh/凯华','插件',75,20,'E-01-04',0.9,'C20423','15脉冲/30定位 带按键'],
+ // 光电与显示
+ ['红色LED 0603','19-217/R6C-AP1Q2/3T','光电器件与显示','发光二极管(LED)','EVERLIGHT/亿光','0603',15,100,'F-01-01',0.05,'C72038','高亮红光 2V 20mA'],
+ ['全彩LED WS2812B','WS2812B-B/W','光电器件与显示','发光二极管(LED)','Worldsemi/华彩威','5050',280,50,'F-01-02',0.16,'C114585','内置IC 单总线 幻彩'],
+ ['数码管 0.56寸 1位 共阴','SM410561N','光电器件与显示','数码管','ARKLED/方舟','插件 DIP-10',90,20,'F-01-03',0.5,'C3527','红色高亮'],
+ ['光耦 PC817','PC817B','光电器件与显示','光电耦合器','Sharp/夏普','DIP-4',340,80,'F-01-04',0.12,'C7478','光电隔离 通用'],
+ ['0.96寸 OLED显示屏 I2C','0.96OLED-4P','光电器件与显示','OLED显示屏','中景园','Module 4Pin',22,8,'F-02-01',9.8,'C14343','128×64 SSD1306 I2C'],
+ // 传感器
+ ['温度传感器 DS18B20','DS18B20','传感器','温度传感器','Maxim/美信','TO-92',48,12,'G-01-01',2.8,'C7530','单总线 -55~125℃'],
+ ['温湿度传感器 DHT11','DHT11','传感器','湿度传感器','AOSONG/奥松','插件 4Pin',35,10,'G-01-02',3.5,'C11551','单总线 温湿一体'],
+ ['六轴传感器 MPU-6050','MPU-6050','传感器','陀螺仪','TDK InvenSense','QFN-24',4,5,'G-01-03',6.5,'C24112','三轴加速度+三轴陀螺仪'],
+ ['霍尔传感器 A3144','A3144EUA','传感器','霍尔传感器','Allegro','TO-92S',130,30,'G-01-04',0.4,'C38063','开关型 磁敏'],
+ ['光照传感器 BH1750','BH1750FVI-TR','传感器','光照传感器','ROHM/罗姆','WSOF-6',42,10,'G-01-05',1.9,'C78948','I2C 数字光照'],
+ // 保护器件
+ ['自恢复保险丝 500mA','SMD1812P050TF','保护器件','自恢复保险丝(PTC)','JDT/集电通','1812',500,100,'H-01-01',0.08,'C98788','60V 贴片自恢复'],
+ ['压敏电阻 07D471K','07D471K','保护器件','压敏电阻(MOV)','FH/风华','插件 7mm',380,100,'H-01-02',0.09,'C9608','470V 浪涌保护'],
+ ['玻璃保险丝 2A 250V','5×20 2A 快断','保护器件','保险丝','Walter/华德','插件 5×20',260,60,'H-01-03',0.15,'C11537','快断型 玻璃管'],
+ ['气体放电管 90V','2RM090L-8','保护器件','气体放电管','BrightKing/君耀','插件 8mm',90,20,'H-01-04',0.5,'C51585','防雷 浪涌吸收'],
+ // 电源与模块
+ ['18650锂电池 2600mAh','ICR18650-26V','电源与模块','电池','EVE/亿纬','18650',40,10,'I-01-01',8.0,'C319321','3.7V 平头'],
+ ['CR2032 电池座','BS-2-1','电源与模块','电池座/扣','Q&J','插件',180,40,'I-01-02',0.25,'C70376','纽扣电池座 直插'],
+ ['DC-DC降压模块 MP1584','MP1584降压小板','电源与模块','DC-DC模块','优信电子','Module',32,10,'I-01-03',2.5,'C5248086','4.5-28V转0.8-20V 3A'],
+ ['面包板电源模块 MB102','MB102','电源与模块','电源模块','中景园','Module',28,8,'I-01-04',2.2,'C54004','5V/3.3V 双路输出'],
+ ['Arduino Nano 开发板','Nano V3.0 CH340','电源与模块','开发板/核心板','国产兼容','Module',15,5,'I-01-05',11.5,'C19001','ATmega328P 已焊排针'],
+ // 辅料与工具
+ ['双面喷锡洞洞板 7×9cm','DDB-7×9','辅料与工具','PCB/洞洞板','国产','7×9cm',50,15,'J-01-01',1.2,'C27092','玻纤板 2.54间距'],
+ ['散热片 14×14×6mm','XS-1414-6','辅料与工具','散热片','国产','带背胶',200,50,'J-01-02',0.18,'C102054','铝制 黑色阳极'],
+ ['杜邦线 40P 母对母','DPX-FF-20','辅料与工具','导线/线缆','国产','20cm',120,30,'J-01-03',1.5,'C45655','一排40根 彩色'],
+ ['焊锡丝 0.8mm 100g','Sn63Pb37-0.8','辅料与工具','焊锡/助焊剂','国产','0.8mm',12,5,'J-01-04',12.0,'C2897583','63/37 含松香'],
+ ['2.4G PCB天线','ANT-2.4G-IPX','辅料与工具','天线','国产','IPEX',66,15,'J-01-05',1.8,'C2897988','WiFi/蓝牙 内置天线'],
+ // nasPower BOM 演示元件
+ ['陶瓷电容 1uF 50V 0805','CL21B105KBFNNNE','无源元件','陶瓷电容','SAMSUNG/三星','0805',1800,300,'A-01-07',0.012,'C52923','X7R 电源滤波'],
+ ['陶瓷电容 100nF 50V 0805','CL21B104KBCNNNC','无源元件','陶瓷电容','SAMSUNG/三星','0805',90,30,'A-01-08',0.009,'C14663','X7R 去耦电容'],
+ ['陶瓷电容 0.01uF 50V 0805','CL21B103KBCNNNC','无源元件','陶瓷电容','SAMSUNG/三星','0805',30,10,'A-01-09',0.008,'C16168','10nF 0805'],
+ ['贴片电阻 1kΩ ±1% 0805','RC0805FR-071KL','无源元件','贴片电阻','YAGEO/国巨','0805',800,100,'A-01-10',0.006,'C17414','1/8W 0805'],
+ ['贴片电阻 10kΩ ±1% 0805','RC0805FR-0710KL','无源元件','贴片电阻','YAGEO/国巨','0805',350,100,'A-01-11',0.006,'C17477','1/8W 0805'],
+ ['贴片电阻 100Ω ±1% 0805','RC0805FR-07100RL','无源元件','贴片电阻','YAGEO/国巨','0805',60,20,'A-01-12',0.006,'C17714','1/8W 0805'],
+ ['可调电阻 3296W 2kΩ','3296W-1-202LF','无源元件','电位器/可调电阻','JIERR/捷而瑞','插件 3296W',25,10,'A-02-04',0.5,'C49190458','多圈精密可调'],
+ ['肖特基二极管 1N5819WS','1N5819WS','分立器件','肖特基二极管','Hottech/合科泰','SOD-323',120,30,'B-01-06',0.05,'C191023','40V 1A 贴片'],
+ ['NPN三极管 2N3904S','2N3904S-HXY','分立器件','三极管(BJT)','HXY/华轩阳','SOT-23',0,10,'B-02-04',0.04,'C46682376','40V 200mA'],
+ ['定时器 NE555','NE555DR','集成电路(IC)','时钟/定时器','TI/德州仪器','SOIC-8',12,5,'C-03-01',0.6,'C7593','经典定时器芯片'],
+ ['光耦 PC817C','PC817C','光电器件与显示','光电耦合器','GOODWORK/固得沃克','SOP-4',2,5,'F-02-01',0.15,'C3025164','晶体管输出'],
+ ['HC-2510-4A 连接器','HC-2510-4A','连接器/接插件','线对板连接器','HCTL/华灿天禄','插件 2.54',40,10,'D-02-01',0.2,'C2982033','4P 带扣针座'],
+ ['KF2EDGV-3.81-2P 端子','KF2EDGV-3.81-2P','连接器/接插件','接线端子','KEFA/科发','插件 3.81',8,5,'D-02-02',0.3,'C441332','2P 插拔式端子']
+];
+async function seedDemo(){
+  const cur = parseInt(localStorage.getItem('demoVersion')||'0');
+  if(cur >= DEMO_VERSION) return;
+  const now = Date.now();
+  const exists = new Set(components.map(c=>c.name+'|'+c.model));
+  for(const [name,model,parent,child,brand,pkg,stock,minStock,location,price,supplier,desc] of DEMO){
+    if(exists.has(name+'|'+model)) continue;
+    const c = {id:uid(), name, model, parent, child, brand, package:pkg, stock, minStock,
+      location, price, supplier:'立创商城 '+supplier, description:desc, image:null, createdAt:now, updatedAt:now};
+    await dbPut('components', c); components.push(c);
+    if(stock>0){
+      const t = {id:uid(), componentId:c.id, type:'in', qty:stock, balanceAfter:stock, note:T('note.init'), time:now};
+      await dbPut('transactions', t); transactions.push(t);
+    }
+  }
+  localStorage.setItem('demoVersion', String(DEMO_VERSION));
+}
+/* ================= 渲染：分类树 ================= */
+function renderTree(){
+  const countByParent = {}, countByChild = {};
+  for(const c of components){
+    countByParent[c.parent] = (countByParent[c.parent]||0)+1;
+    countByChild[c.child] = (countByChild[c.child]||0)+1;
+  }
+  let html = `<button class="cat-item ${activeParent===null?'active':''}" data-parent="">
+    <span style="width:12px"></span>${T('tree.all')}<span class="cnt">${components.length}</span></button>`;
+  for(const [parent, children] of Object.entries(CATEGORIES)){
+    const isExp = expanded.has(parent);
+    html += `<button class="cat-item ${isExp?'expanded':''} ${activeParent===parent&&!activeChild?'active':''}" data-parent="${esc(parent)}">
+      <span class="arrow">▶</span>${esc(parent)}
+      <span class="cnt">${countByParent[parent]||0}</span></button>`;
+    if(isExp){
+      html += `<div class="cat-children">`;
+      for(const ch of children){
+        html += `<button class="cat-child ${activeChild===ch?'active':''}" data-parent="${esc(parent)}" data-child="${esc(ch)}">
+          ${esc(ch)}<span class="cnt">${countByChild[ch]||''}</span></button>`;
+      }
+      html += `</div>`;
+    }
+  }
+  $('catTree').innerHTML = html;
+  $('catTree').querySelectorAll('.cat-item,.cat-child').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const p = btn.dataset.parent, ch = btn.dataset.child;
+      if(ch){ activeParent = p; activeChild = ch; expanded.add(p); }
+      else if(p === ''){ activeParent = null; activeChild = null; }
+      else {
+        if(expanded.has(p) && activeParent===p && !activeChild) expanded.delete(p);
+        else expanded.add(p);
+        activeParent = p; activeChild = null;
+      }
+      renderTree(); renderList();
+    });
+  });
+}
+
+/* ================= 渲染：统计 ================= */
+function renderStats(){
+  $('stTypes').textContent = fmtNum(components.length);
+  $('stStock').textContent = fmtNum(components.reduce((s,c)=>s+(+c.stock||0),0));
+  $('stValue').textContent = fmtMoney(components.reduce((s,c)=>s+(+c.stock||0)*(+c.price||0),0));
+  $('stLow').textContent = fmtNum(components.filter(c=>(+c.stock||0) <= (+c.minStock||0)).length);
+}
+
+/* ================= 封装选项（级联：只列出当前分类下元件实际有的封装） ================= */
+function pkgSourceFor(parent, child){
+  let list = components;
+  if(child) list = list.filter(c=>c.child===child);
+  else if(parent) list = list.filter(c=>c.parent===parent);
+  return list;
+}
+function renderPkgOptions(selectEl, current, source){
+  const pkgs = [...new Set(source.map(c=>c.package).filter(Boolean))]
+    .sort((a,b)=>String(a).localeCompare(String(b)));
+  selectEl.innerHTML = `<option value="">${T('pkg.all')}</option>` +
+    pkgs.map(p=>`<option value="${esc(p)}" ${p===current?'selected':''}>${esc(p)}</option>`).join('');
+  return pkgs.includes(current) ? current : '';  // 当前分类下无该封装时自动重置
+}
+
+/* ================= 渲染：总览列表 ================= */
+function filteredComponents(){
+  let list = components;
+  if(activeChild) list = list.filter(c=>c.child===activeChild);
+  else if(activeParent) list = list.filter(c=>c.parent===activeParent);
+  if(pkgFilter) list = list.filter(c=>c.package===pkgFilter);
+  if(searchTerm){
+    const q = searchTerm.toLowerCase();
+    list = list.filter(c=>[c.name,c.model,c.brand,c.location,c.supplier,c.package,c.child,c.parent]
+      .some(v=>String(v||'').toLowerCase().includes(q)));
+  }
+  const arr = [...list];
+  if(sortMode==='stockDesc') arr.sort((a,b)=>(+b.stock||0)-(+a.stock||0));
+  else if(sortMode==='stockAsc') arr.sort((a,b)=>(+a.stock||0)-(+b.stock||0));
+  else if(sortMode==='name') arr.sort((a,b)=>String(a.name).localeCompare(String(b.name), LANG==='en'?'en':'zh'));
+  else arr.sort((a,b)=>(b.updatedAt||0)-(a.updatedAt||0));
+  return arr;
+}
+function stockBarHTML(c){
+  const stock = +c.stock||0, min = +c.minStock||0;
+  const cls = stock===0 ? 'zero' : (stock<=min ? 'low' : '');
+  const pct = min>0 ? Math.min(100, Math.round(stock/min*100)) : (stock>0?100:0);
+  return `<div class="stock-bar"><div class="stock-fill ${cls}" style="width:${pct}%"></div></div>
+    <div class="stock-nums"><b class="${cls}">${fmtNum(stock)}</b> / ${fmtNum(min)}</div>`;
+}
+function renderList(){
+  pkgFilter = renderPkgOptions($('pkgFilter'), pkgFilter, pkgSourceFor(activeParent, activeChild));
+  const list = filteredComponents();
+  const crumb = activeChild ? `${activeParent} / ${activeChild}` : (activeParent || T('tree.all'));
+  $('crumbText').textContent = `${crumb} · ${TF('n.items', list.length)}`;
+  $('listEmpty').hidden = list.length > 0;
+  $('compTbody').innerHTML = list.map(c=>{
+    const low = (+c.stock||0) <= (+c.minStock||0);
+    const cls = (+c.stock||0)===0 ? 'zero' : (low ? 'low' : '');
+    const img = c.image || placeholderImg(c.name, c.parent);
+    return `<tr>
+      <td><img class="thumb" src="${img}" data-big="${c.image?esc(c.id):''}" alt=""></td>
+      <td><div class="c-name">${esc(c.name)}${low?'<span class="low-badge">'+T('badge.low')+'</span>':''}</div>
+          <div class="c-model">${esc(c.model||'')}${c.brand?' · '+esc(c.brand):''}</div></td>
+      <td><span class="tag">${esc(c.child)}</span></td>
+      <td>${c.package?`<span class="pkg">${esc(c.package)}</span>`:'<span style="color:var(--faint)">—</span>'}</td>
+      <td class="stock-cell">${stockBarHTML(c)}</td>
+      <td>${c.location?`<span class="loc">${esc(c.location)}</span>`:'—'}</td>
+      <td style="color:var(--muted)">${c.price?fmtMoney(c.price):'—'}</td>
+      <td><div class="row-actions">
+        ${c.datasheet?`<button class="btn sm ds-btn" data-ds="${esc(c.id)}">${T('btn.ds')}</button>`:''}
+        <button class="btn sm green" data-in="${esc(c.id)}">${T('btn.in')}</button>
+        <button class="btn sm amber" data-out="${esc(c.id)}">${T('btn.out')}</button>
+        <button class="btn sm" data-edit="${esc(c.id)}">${T('btn.edit')}</button>
+        <button class="btn sm red" data-del="${esc(c.id)}">${T('btn.del')}</button>
+      </div></td>
+    </tr>`;
+  }).join('');
+}
+
+/* ================= 渲染：入库 / 出库页 ================= */
+function stockModeName(){ return view==='stockin' ? T('word.in') : T('word.out'); }
+function renderStockFilters(){
+  const p = $('siParent');
+  p.innerHTML = `<option value="">${T('si.allparent')}</option>` +
+    Object.keys(CATEGORIES).map(k=>`<option value="${esc(k)}" ${k===siParent?'selected':''}>${esc(k)}</option>`).join('');
+  siPkg = renderPkgOptions($('siPkg'), siPkg, pkgSourceFor(siParent, siChild));
+  const csel = $('siChild');
+  const children = siParent ? (CATEGORIES[siParent]||[]) : [];
+  csel.innerHTML = `<option value="">${T('si.allchild')}</option>` +
+    children.map(k=>`<option value="${esc(k)}" ${k===siChild?'selected':''}>${esc(k)}</option>`).join('');
+  csel.disabled = !siParent;
+}
+function filteredStockComponents(){
+  let list = components;
+  if(siChild) list = list.filter(c=>c.child===siChild);
+  else if(siParent) list = list.filter(c=>c.parent===siParent);
+  if(siPkg) list = list.filter(c=>c.package===siPkg);
+  if(siSearch){
+    const q = siSearch.toLowerCase();
+    list = list.filter(c=>[c.name,c.model,c.brand,c.location,c.package,c.child]
+      .some(v=>String(v||'').toLowerCase().includes(q)));
+  }
+  const order = Object.keys(CATEGORIES);
+  return [...list].sort((a,b)=>{
+    const d = order.indexOf(a.parent) - order.indexOf(b.parent);
+    return d !== 0 ? d : String(a.name).localeCompare(String(b.name), LANG==='en'?'en':'zh');
+  });
+}
+function renderStock(){
+  const mode = stockModeName();
+  $('stockPanelTitle').textContent = T(view==='stockin'?'nav.stockin':'nav.stockout');
+  $('qtyTh').textContent = T(view==='stockin'?'th.qtyin':'th.qtyout');
+  renderStockFilters();
+  const list = filteredStockComponents();
+  const parts = [siChild || siParent || T('stock.allcats')];
+  if(siPkg) parts.push(siPkg);
+  $('stockCrumb').textContent = parts.join(' / ') + ` · ${TF('n.items', list.length)}`;
+  $('siHint').textContent = view==='stockin' ? T('hint.in') : T('hint.out');
+  $('stockEmpty').hidden = list.length > 0;
+  $('stockTbody').innerHTML = list.map(c=>{
+    const low = (+c.stock||0) <= (+c.minStock||0);
+    const cls = (+c.stock||0)===0 ? 'zero' : (low ? 'low' : '');
+    const img = c.image || placeholderImg(c.name, c.parent);
+    const btnCls = view==='stockin' ? 'green' : 'amber';
+    return `<tr>
+      <td><img class="thumb" src="${img}" data-big="${c.image?esc(c.id):''}" alt=""></td>
+      <td><div class="c-name">${esc(c.name)}${low?'<span class="low-badge">'+T('badge.low')+'</span>':''}</div>
+          <div class="c-model">${esc(c.model||'')}${c.brand?' · '+esc(c.brand):''}</div></td>
+      <td><span class="tag">${esc(c.child)}</span></td>
+      <td>${c.package?`<span class="pkg">${esc(c.package)}</span>`:'<span style="color:var(--faint)">—</span>'}</td>
+      <td class="stock-cell">${stockBarHTML(c)}</td>
+      <td>${c.location?`<span class="loc">${esc(c.location)}</span>`:'—'}</td>
+      <td><input class="qty-input" type="number" min="1" step="1" placeholder="0" data-qty="${esc(c.id)}"></td>
+      <td><input class="note-input" placeholder="${view==='stockin'?T('note.ph.in'):T('note.ph.out')}" data-note="${esc(c.id)}"></td>
+      <td><button class="btn sm ${btnCls}" data-do="${esc(c.id)}">${view==='stockin'?T('btn.in'):T('btn.out')}</button></td>
+    </tr>`;
+  }).join('');
+  if(pendingFocusId){
+    const el = document.querySelector(`[data-qty="${pendingFocusId}"]`);
+    if(el){ el.focus(); el.closest('tr').classList.add('flash'); setTimeout(()=>el.closest('tr')?.classList.remove('flash'), 1200); }
+    pendingFocusId = null;
+  }
+}
+
+/* ================= 渲染：流水 ================= */
+function renderLogs(){
+  let list = [...transactions].sort((a,b)=>b.time-a.time);
+  if(logFilter!=='all') list = list.filter(t=>t.type===logFilter);
+  $('logCrumb').textContent = TF('log.count', list.length);
+  $('logEmpty').hidden = list.length > 0;
+  $('logTbody').innerHTML = list.map(t=>{
+    const c = components.find(x=>x.id===t.componentId);
+    const name = c ? `${esc(c.name)} <span class="c-model">${esc(c.model||'')}</span>` : '<span style="color:var(--faint)">'+T('comp.deleted')+'</span>';
+    return `<tr>
+      <td style="white-space:nowrap;color:var(--muted);font-size:12.5px;font-variant-numeric:tabular-nums">${fmtTime(t.time)}</td>
+      <td>${name}</td>
+      <td>${t.type==='in'?'<span class="badge-in">'+T('badge.in')+'</span>':'<span class="badge-out">'+T('badge.out')+'</span>'}</td>
+      <td class="${t.type==='in'?'qty-in':'qty-out'}">${t.type==='in'?'+':'−'}${fmtNum(t.qty)}</td>
+      <td style="font-variant-numeric:tabular-nums">${fmtNum(t.balanceAfter)}</td>
+      <td style="color:var(--muted)">${esc(t.note||'—')}</td>
+    </tr>`;
+  }).join('');
+}
+function renderAll(){ renderTree(); renderStats(); renderList(); renderStock(); renderCats(); renderLogs(); }
+
+/* ================= 分类管理页 ================= */
+let catSelParent = null;   // 分类管理页选中的一级分类
+let catEditing = null;     // {parent, child|null} 正在重命名
+
+function renderCats(){
+  const pCount = {}, cCount = {};
+  for(const c of components){
+    pCount[c.parent] = (pCount[c.parent]||0)+1;
+    cCount[c.parent+'|'+c.child] = (cCount[c.parent+'|'+c.child]||0)+1;
+  }
+  const parents = Object.keys(CATEGORIES);
+  if(catSelParent && !CATEGORIES[catSelParent]) catSelParent = null;
+  if(!catSelParent && parents.length) catSelParent = parents[0];
+  $('catParentList').innerHTML = parents.map((p,i)=>{
+    if(catEditing && catEditing.parent===p && catEditing.child===null) return renameRowHTML(p);
+    return `<div class="cat-row ${p===catSelParent?'sel':''}" data-sel="${esc(p)}">
+      <span class="nm">${esc(p)}</span>
+      <span class="cnt2">${TF('cats.cnt2', CATEGORIES[p].length, pCount[p]||0)}</span>
+      <button class="btn sm mv" data-up-p="${esc(p)}" ${i===0?'disabled':''} title="${T('btn.up')}">▲</button>
+      <button class="btn sm mv" data-down-p="${esc(p)}" ${i===parents.length-1?'disabled':''} title="${T('btn.down')}">▼</button>
+      <button class="btn sm" data-ren-p="${esc(p)}">${T('btn.rename')}</button>
+      <button class="btn sm red" data-del-p="${esc(p)}">${T('btn.del')}</button>
+    </div>`;
+  }).join('') || `<div class="empty">${T('cats.empty.p')}</div>`;
+  $('catChildOf').textContent = catSelParent ? TF('cats.of', catSelParent) : '';
+  const children = catSelParent ? (CATEGORIES[catSelParent]||[]) : [];
+  $('catChildList').innerHTML = !catSelParent ? `<div class="empty">${T('cats.empty.c0')}</div>`
+    : (children.map((ch,i)=>{
+      if(catEditing && catEditing.parent===catSelParent && catEditing.child===ch) return renameRowHTML(ch);
+      return `<div class="cat-row">
+        <span class="nm">${esc(ch)}</span>
+        <span class="cnt2">${TF('cats.cnt', cCount[catSelParent+'|'+ch]||0)}</span>
+        <button class="btn sm mv" data-up-c="${esc(ch)}" ${i===0?'disabled':''} title="${T('btn.up')}">▲</button>
+        <button class="btn sm mv" data-down-c="${esc(ch)}" ${i===children.length-1?'disabled':''} title="${T('btn.down')}">▼</button>
+        <button class="btn sm" data-ren-c="${esc(ch)}">${T('btn.rename')}</button>
+        <button class="btn sm red" data-del-c="${esc(ch)}">${T('btn.del')}</button>
+      </div>`;
+    }).join('') || `<div class="empty">${T('cats.empty.c')}</div>`);
+  const ri = $('catRenameInput');
+  if(ri){ ri.focus(); ri.select(); }
+}
+function renameRowHTML(val){
+  return `<div class="cat-row"><input class="cat-rename" id="catRenameInput" value="${esc(val)}">
+    <button class="btn sm green" data-ren-ok="1">${T('btn.ok')}</button>
+    <button class="btn sm" data-ren-cancel="1">${T('btn.cancel')}</button></div>`;
+}
+function commitCatRename(){
+  const inp = $('catRenameInput'); if(!inp || !catEditing) return;
+  const ed = catEditing; catEditing = null;
+  if(ed.child!==null && ed.child!==undefined) renameChildCat(ed.parent, ed.child, inp.value);
+  else renameParentCat(ed.parent, inp.value);
+}
+async function renameParentCat(oldName, val){
+  const newName = val.trim();
+  if(!newName || newName===oldName){ renderCats(); return; }
+  if(CATEGORIES[newName]!==undefined){ toast(T('cat.dup.parent'),'err'); catEditing={parent:oldName,child:null}; renderCats(); return; }
+  const obj = {};
+  for(const [k,v] of Object.entries(CATEGORIES)) obj[k===oldName?newName:k]=v;
+  CATEGORIES = obj;
+  const affected = components.filter(c=>c.parent===oldName);
+  for(const c of affected){ c.parent = newName; await dbPut('components', c); }
+  if(activeParent===oldName) activeParent = newName;
+  if(siParent===oldName) siParent = newName;
+  if(catSelParent===oldName) catSelParent = newName;
+  saveCategories(); renderAll();
+  toast(TF('cat.renamed', newName, affected.length),'ok');
+}
+async function renameChildCat(parent, oldName, val){
+  const newName = val.trim();
+  const arr = CATEGORIES[parent]||[];
+  if(!newName || newName===oldName){ renderCats(); return; }
+  if(arr.includes(newName)){ toast(T('cat.dup.child2'),'err'); catEditing={parent,child:oldName}; renderCats(); return; }
+  CATEGORIES[parent] = arr.map(x=>x===oldName?newName:x);
+  const affected = components.filter(c=>c.parent===parent && c.child===oldName);
+  for(const c of affected){ c.child = newName; await dbPut('components', c); }
+  if(activeParent===parent && activeChild===oldName) activeChild = newName;
+  if(siParent===parent && siChild===oldName) siChild = newName;
+  saveCategories(); renderAll();
+  toast(TF('cat.renamed', newName, affected.length),'ok');
+}
+function addParentCat(){
+  const inp = $('newParentName'); const name = inp.value.trim();
+  if(!name) return toast(T('cat.name.req'),'err');
+  if(CATEGORIES[name]!==undefined) return toast(T('cat.dup.parent2'),'err');
+  CATEGORIES[name] = []; inp.value = '';
+  catSelParent = name;
+  saveCategories(); renderAll();
+  toast(TF('cat.added', name),'ok');
+}
+function addChildCat(){
+  if(!catSelParent) return toast(T('cat.sel.req'),'err');
+  const inp = $('newChildName'); const name = inp.value.trim();
+  if(!name) return toast(T('cat.name.req'),'err');
+  if((CATEGORIES[catSelParent]||[]).includes(name)) return toast(T('cat.dup.child'),'err');
+  CATEGORIES[catSelParent].push(name); inp.value = '';
+  saveCategories(); renderAll();
+  toast(TF('cat.child.added', catSelParent, name),'ok');
+}
+function deleteParentCat(name){
+  const n = components.filter(c=>c.parent===name).length;
+  if(n>0) return toast(TF('cat.del.blocked', name, n),'err');
+  if(!confirm(TF('cat.del.confirm.p', name, CATEGORIES[name].length))) return;
+  delete CATEGORIES[name];
+  if(activeParent===name){ activeParent=null; activeChild=null; }
+  if(siParent===name){ siParent=''; siChild=''; }
+  if(catSelParent===name) catSelParent=null;
+  saveCategories(); renderAll();
+  toast(T('cat.deleted'),'ok');
+}
+function deleteChildCat(ch){
+  const p = catSelParent; if(!p) return;
+  const n = components.filter(c=>c.parent===p && c.child===ch).length;
+  if(n>0) return toast(TF('cat.del.blocked', ch, n),'err');
+  if(!confirm(TF('cat.del.confirm.c', ch))) return;
+  CATEGORIES[p] = CATEGORIES[p].filter(x=>x!==ch);
+  if(activeParent===p && activeChild===ch) activeChild=null;
+  if(siParent===p && siChild===ch) siChild='';
+  saveCategories(); renderAll();
+  toast(T('cat.deleted'),'ok');
+}
+function moveParentCat(name, dir){
+  const keys = Object.keys(CATEGORIES);
+  const i = keys.indexOf(name), j = i + dir;
+  if(i<0 || j<0 || j>=keys.length) return;
+  [keys[i], keys[j]] = [keys[j], keys[i]];
+  const obj = {};
+  for(const k of keys) obj[k] = CATEGORIES[k];
+  CATEGORIES = obj;
+  saveCategories(); renderAll();
+}
+function moveChildCat(ch, dir){
+  const p = catSelParent; if(!p) return;
+  const arr = CATEGORIES[p];
+  const i = arr.indexOf(ch), j = i + dir;
+  if(i<0 || j<0 || j>=arr.length) return;
+  [arr[i], arr[j]] = [arr[j], arr[i]];
+  saveCategories(); renderAll();
+}
+$('catParentList').addEventListener('click', e=>{
+  const btn = e.target.closest('button');
+  if(btn){
+    if(btn.dataset.upP!==undefined){ moveParentCat(btn.dataset.upP, -1); }
+    else if(btn.dataset.downP!==undefined){ moveParentCat(btn.dataset.downP, 1); }
+    else if(btn.dataset.renP!==undefined){ catEditing={parent:btn.dataset.renP, child:null}; renderCats(); }
+    else if(btn.dataset.delP!==undefined) deleteParentCat(btn.dataset.delP);
+    else if(btn.dataset.renOk!==undefined) commitCatRename();
+    else if(btn.dataset.renCancel!==undefined){ catEditing=null; renderCats(); }
+    return;
+  }
+  const row = e.target.closest('.cat-row');
+  if(row && row.dataset.sel){ if(catEditing) catEditing=null; catSelParent=row.dataset.sel; renderCats(); }
+});
+$('catChildList').addEventListener('click', e=>{
+  const btn = e.target.closest('button');
+  if(!btn) return;
+  if(btn.dataset.upC!==undefined){ moveChildCat(btn.dataset.upC, -1); }
+  else if(btn.dataset.downC!==undefined){ moveChildCat(btn.dataset.downC, 1); }
+  else if(btn.dataset.renC!==undefined){ catEditing={parent:catSelParent, child:btn.dataset.renC}; renderCats(); }
+  else if(btn.dataset.delC!==undefined) deleteChildCat(btn.dataset.delC);
+  else if(btn.dataset.renOk!==undefined) commitCatRename();
+  else if(btn.dataset.renCancel!==undefined){ catEditing=null; renderCats(); }
+});
+document.addEventListener('keydown', e=>{
+  if(view!=='cats') return;
+  if(e.key==='Enter'){
+    if(e.target.id==='catRenameInput') commitCatRename();
+    else if(e.target.id==='newParentName') addParentCat();
+    else if(e.target.id==='newChildName') addChildCat();
+  }else if(e.key==='Escape' && e.target.id==='catRenameInput'){ catEditing=null; renderCats(); }
+});
+$('addParentBtn').addEventListener('click', addParentCat);
+$('addChildBtn').addEventListener('click', addChildCat);
+$('catResetBtn').addEventListener('click', ()=>{
+  if(!confirm(T('cat.reset.confirm'))) return;
+  CATEGORIES = JSON.parse(JSON.stringify(DEFAULT_CATEGORIES));
+  activeParent=null; activeChild=null; siParent=''; siChild=''; catSelParent=null; catEditing=null;
+  saveCategories(); renderAll();
+  toast(T('cat.reset.done'),'ok');
+});
+
+/* ================= BOM 核对 ================= */
+const normVal = s => String(s||'').toLowerCase().replace(/[ωΩ]/g,'r').replace(/[µμ]/g,'u').replace(/[\s_\-]+/g,'');
+const normModel = s => String(s||'').toUpperCase().replace(/[^A-Z0-9\u4e00-\u9fff]/g,'');
+const lcscOf = c => { const m = String(c.supplier||'').match(/C\d{3,}/i); return m ? m[0].toUpperCase() : ''; };
+
+/* 极简 xlsx 读取（ZIP + XML，无需外部库） */
+async function readXLSX(file){
+  if(typeof DecompressionStream === 'undefined') throw new Error(T('err.xlsx.support'));
+  const buf = new Uint8Array(await file.arrayBuffer());
+  const dv = new DataView(buf.buffer, buf.byteOffset, buf.byteLength);
+  let eocd = -1;
+  for(let i=buf.length-22; i>=0 && i>buf.length-66000; i--){
+    if(dv.getUint32(i,true)===0x06054b50){ eocd=i; break; }
+  }
+  if(eocd<0) throw new Error(T('err.xlsx.invalid'));
+  const count = dv.getUint16(eocd+10,true);
+  let off = dv.getUint32(eocd+16,true);
+  const files = {};
+  const dec = new TextDecoder();
+  for(let i=0;i<count;i++){
+    const nlen = dv.getUint16(off+28,true);
+    const name = dec.decode(buf.slice(off+46, off+46+nlen));
+    const method = dv.getUint16(off+10,true);
+    const csize = dv.getUint32(off+20,true);
+    const lho = dv.getUint32(off+42,true);
+    const dataStart = lho+30+dv.getUint16(lho+26,true)+dv.getUint16(lho+28,true);
+    let data = buf.slice(dataStart, dataStart+csize);
+    if(method===8){
+      const ds = new DecompressionStream('deflate-raw');
+      data = new Uint8Array(await new Response(new Blob([data]).stream().pipeThrough(ds)).arrayBuffer());
+    }
+    files[name] = dec.decode(data);
+    off += 46+nlen+dv.getUint16(off+30,true)+dv.getUint16(off+32,true);
+  }
+  let shared = [];
+  if(files['xl/sharedStrings.xml']){
+    const doc = new DOMParser().parseFromString(files['xl/sharedStrings.xml'],'application/xml');
+    shared = [...doc.querySelectorAll('si')].map(si=>[...si.querySelectorAll('t')].map(t=>t.textContent).join(''));
+  }
+  let sheetPath = 'xl/worksheets/sheet1.xml';
+  const wbDoc = new DOMParser().parseFromString(files['xl/workbook.xml'],'application/xml');
+  const firstSheet = wbDoc.querySelector('sheet');
+  const rid = firstSheet && (firstSheet.getAttribute('r:id')||firstSheet.getAttribute('id'));
+  if(rid && files['xl/_rels/workbook.xml.rels']){
+    const relDoc = new DOMParser().parseFromString(files['xl/_rels/workbook.xml.rels'],'application/xml');
+    for(const rel of relDoc.querySelectorAll('Relationship')){
+      if(rel.getAttribute('Id')===rid){
+        const t = rel.getAttribute('Target');
+        sheetPath = t.startsWith('/') ? t.slice(1) : ('xl/'+t).replace('xl//','');
+      }
+    }
+  }
+  if(!files[sheetPath]) throw new Error(T('err.xlsx.sheet'));
+  const shDoc = new DOMParser().parseFromString(files[sheetPath],'application/xml');
+  const colIdx = ref => { let n=0; for(const ch of ref.replace(/\d/g,'')) n = n*26 + ch.charCodeAt(0)-64; return n-1; };
+  const grid = [];
+  shDoc.querySelectorAll('sheetData row').forEach(row=>{
+    const arr = [];
+    row.querySelectorAll('c').forEach(c=>{
+      const i = colIdx(c.getAttribute('r')||'A');
+      const t = c.getAttribute('t');
+      let v = '';
+      if(t==='inlineStr') v = [...c.querySelectorAll('t')].map(x=>x.textContent).join('');
+      else { const ve = c.querySelector('v'); v = ve ? ve.textContent : ''; if(t==='s') v = shared[+v] ?? ''; }
+      arr[i] = v;
+    });
+    grid.push(arr.map(x=>x??''));
+  });
+  return grid;
+}
+function parseCSVText(text){
+  text = text.replace(/^\ufeff/,'');
+  const grid = []; let row = [], cur = '', inQ = false;
+  for(let i=0;i<text.length;i++){
+    const ch = text[i];
+    if(inQ){
+      if(ch==='"'){ if(text[i+1]==='"'){ cur+='"'; i++; } else inQ=false; }
+      else cur+=ch;
+    }else if(ch==='"') inQ = true;
+    else if(ch===','){ row.push(cur); cur=''; }
+    else if(ch==='\n'||ch==='\r'){
+      if(ch==='\r' && text[i+1]==='\n') i++;
+      row.push(cur); cur=''; grid.push(row); row=[];
+    }else cur+=ch;
+  }
+  if(cur!==''||row.length){ row.push(cur); grid.push(row); }
+  return grid.map(r=>r.map(x=>String(x??'').trim()));
+}
+/* 表头映射为结构化 BOM 行 */
+function mapBomGrid(grid){
+  const HMAP = [
+    [/^(no\.?|序号)$/i,'no'], [/quantity|数量/i,'qty'], [/^comment$|注释/i,'comment'],
+    [/designator|位号/i,'designator'], [/footprint|封装/i,'footprint'], [/^value$|^值$/i,'value'],
+    [/manufacturer part|制造商型号|制造商物料/i,'mfrPart'], [/^manufacturer$|^制造商$/i,'mfr'],
+    [/supplier part|供应商编号|商品编号|供应商物料/i,'supplierPart'], [/^supplier$|^供应商$/i,'supplier']
+  ];
+  let hi = -1, cols = {};
+  for(let i=0;i<Math.min(grid.length,10);i++){
+    const m = {};
+    grid[i].forEach((cell,j)=>{
+      const t = String(cell||'').trim();
+      for(const [re,key] of HMAP){ if(re.test(t) && !(key in m)) m[key]=j; }
+    });
+    if('qty' in m && ('comment' in m || 'mfrPart' in m || 'supplierPart' in m)){ hi=i; cols=m; break; }
+  }
+  if(hi<0) throw new Error(T('err.bom.header'));
+  const rows = [];
+  for(let i=hi+1;i<grid.length;i++){
+    const g = grid[i]; const get = k => k in cols ? String(g[cols[k]]??'').trim() : '';
+    const r = {no:get('no'), qty:parseFloat(get('qty'))||0, comment:get('comment'), designator:get('designator'),
+      footprint:get('footprint'), value:get('value'), mfrPart:get('mfrPart'), mfr:get('mfr'),
+      supplierPart:get('supplierPart'), supplier:get('supplier')};
+    if(!r.comment && !r.mfrPart && !r.designator && !r.supplierPart) continue;
+    rows.push(r);
+  }
+  return rows;
+}
+/* 匹配仓库元器件：LCSC编号 > 制造商型号 > 参数值 */
+function matchBomRow(r){
+  const sp = r.supplierPart.toUpperCase();
+  if(sp){
+    const hit = components.find(c=>lcscOf(c)===sp);
+    if(hit) return {comp:hit, via:'via.lcsc'};
+  }
+  const mp = normModel(r.mfrPart);
+  if(mp){
+    const hit = components.find(c=>{ const m = normModel(c.model); return m && (m===mp || m.includes(mp) || mp.includes(m)); });
+    if(hit) return {comp:hit, via:'via.mfr'};
+  }
+  const val = normVal(r.comment) || normVal(r.value);
+  if(val){
+    // 参数值须以独立片段出现（前面不能紧跟字母/数字），避免「71K」误中「07D471K」「071KL」
+    const valRe = new RegExp('(?<![a-z0-9])' + val.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'));
+    let cand = components.filter(c=>valRe.test(normVal(c.name)) || (val.length>=5 && valRe.test(normVal(c.model))));
+    if(cand.length){
+      const size = (r.footprint.match(/(^|\D)(0201|0402|0603|0805|1206|1210|1812|2512)(?!\d)/)||[])[2];
+      let via = 'via.value';
+      if(size){
+        const pk = cand.filter(c=>String(c.package||'').includes(size));
+        if(pk.length) cand = pk; else via = 'via.value.pkg';
+      }
+      return {comp:cand[0], via};
+    }
+  }
+  return {comp:null, via:''};
+}
+function computeBom(){
+  for(const r of bomRows){
+    r.required = Math.round((r.qty||0) * bomMult * 100)/100;
+    const m = matchBomRow(r);
+    r.matched = m.comp; r.via = m.via;
+    r.stock = m.comp ? (+m.comp.stock||0) : 0;
+    r.status = !m.comp ? 'nomatch' : (r.stock >= r.required ? 'ok' : 'short');
+    r.short = Math.max(0, r.required - r.stock);
+  }
+}
+function renderBom(){
+  const has = !!(bomRows && bomRows.length);
+  $('bomEmpty').hidden = has;
+  $('bomTable').hidden = !has;
+  $('bomStats').hidden = !has;
+  $('bomExportBtn').disabled = !has;
+  $('bomInBtn').disabled = !has;
+  $('bomOutBtn').disabled = !has;
+  if(!has) return;
+  computeBom();
+  const ok = bomRows.filter(r=>r.status==='ok').length;
+  const short = bomRows.filter(r=>r.status==='short').length;
+  const nm = bomRows.filter(r=>r.status==='nomatch').length;
+  $('bomCrumb').textContent = TF('bom.crumb', bomFileName, bomRows.length, bomMult);
+  $('bomStats').innerHTML = `
+    <span class="bom-chip">${T('chip.ok')}<b style="color:var(--green)">${ok}</b></span>
+    <span class="bom-chip">${T('chip.short')}<b style="color:var(--amber)">${short}</b></span>
+    <span class="bom-chip">${T('chip.nm')}<b style="color:var(--red)">${nm}</b></span>
+    <span class="bom-chip">${T('chip.buy')}<b>${short+nm}</b></span>`;
+  $('bomExportBtn').textContent = TF('bom.export.n', short+nm);
+  $('bomTbody').innerHTML = bomRows.map(r=>{
+    const badge = r.status==='ok' ? `<span class="badge-ok">${T('badge.ok')}</span>`
+      : r.status==='short' ? `<span class="badge-short">${TF('badge.short', fmtNum(r.short))}</span>`
+      : `<span class="badge-nomatch">${T('badge.nm')}</span>`;
+    return `<tr>
+      <td style="color:var(--faint)">${esc(r.no)}</td>
+      <td><div class="c-name">${esc(r.comment||r.mfrPart||r.value||'—')}</div>
+          <div class="c-model">${esc(r.mfrPart||'')}${r.supplierPart?' · '+esc(r.supplierPart):''}</div></td>
+      <td style="color:var(--muted);font-size:13px">${esc(r.footprint||'—')}</td>
+      <td style="color:var(--muted);font-size:13px">${esc(r.designator||'—')}</td>
+      <td style="font-variant-numeric:tabular-nums;font-weight:600">${fmtNum(r.required)}</td>
+      <td>${r.matched?`<span style="color:var(--accent)">${esc(r.matched.name)}</span><div class="c-model">${esc(T(r.via))} · ${T('th.loc')} ${esc(r.matched.location||'—')}</div>`:'<span style="color:var(--faint)">—</span>'}</td>
+      <td style="font-variant-numeric:tabular-nums">${r.matched?fmtNum(r.stock):'—'}</td>
+      <td>${badge}</td>
+    </tr>`;
+  }).join('');
+}
+$('bomPickBtn').addEventListener('click',()=>$('bomFile').click());
+$('bomMult').addEventListener('input', e=>{ bomMult = Math.max(1, parseInt(e.target.value)||1); renderBom(); });
+$('bomFile').addEventListener('change', async e=>{
+  const f = e.target.files[0]; e.target.value='';
+  if(!f) return;
+  try{
+    const grid = /\.csv$/i.test(f.name) ? parseCSVText(await f.text()) : await readXLSX(f);
+    bomRows = mapBomGrid(grid);
+    if(!bomRows.length) throw new Error(T('err.bom.empty'));
+    bomFileName = f.name;
+    renderBom();
+    computeBom();
+    const ok = bomRows.filter(r=>r.status==='ok').length;
+    toast(TF('bom.parsed', bomRows.length, ok),'ok');
+  }catch(err){ toast(T('bom.parsefail')+err.message,'err'); }
+});
+$('bomExportBtn').addEventListener('click', ()=>{
+  if(!bomRows) return;
+  computeBom();
+  const rows = bomRows.filter(r=>r.status!=='ok');
+  const csvEsc = v => { v = String(v??''); return /[",\n\r]/.test(v) ? '"'+v.replace(/"/g,'""')+'"' : v; };
+  const header = ['No.','Quantity','Comment','Designator','Footprint','Value','Manufacturer Part','Manufacturer','Supplier Part','Supplier',T('ex.req'),T('ex.stock'),T('ex.short'),T('ex.match'),T('ex.via')];
+  const lines = [header.join(',')];
+  for(const r of rows){
+    lines.push([r.no, r.qty, r.comment, r.designator, r.footprint, r.value, r.mfrPart, r.mfr, r.supplierPart, r.supplier,
+      r.required, r.matched ? r.stock : 0, r.matched ? r.short : r.required, r.matched ? r.matched.name : T('badge.nm'), r.via ? T(r.via) : ''].map(csvEsc).join(','));
+  }
+  const blob = new Blob(['\ufeff'+lines.join('\r\n')], {type:'text/csv;charset=utf-8'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `${T('bom.filename')}_${bomFileName.replace(/\.(xlsx|csv)$/i,'')}_${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
+  URL.revokeObjectURL(a.href);
+  toast(TF('bom.exported', rows.length),'ok');
+});
+
+/* 按 BOM 批量入库 / 出库 */
+async function bomApply(mode){
+  if(!bomRows || !bomRows.length) return;
+  computeBom();
+  const word = mode==='in' ? T('word.in') : T('word.out');
+  // 入库：所有匹配到的行；出库：仅库存充足的行
+  const applicable = bomRows.filter(r=>r.matched && (mode==='in' || r.status==='ok'));
+  const skipped = bomRows.length - applicable.length;
+  if(!applicable.length){ toast(TF('bom.none', word),'err'); return; }
+  const skipMsg = skipped>0 ? TF('bom.skipmsg', skipped, mode==='in'?T('skip.in'):T('skip.out')) : '';
+  if(!confirm(TF('bom.confirm', bomFileName, applicable.length, word, bomMult, skipMsg))) return;
+  const now = Date.now();
+  let done = 0;
+  for(const r of applicable){
+    const c = components.find(x=>x.id===r.matched.id);
+    if(!c) continue;
+    const qty = r.required;
+    if(mode==='out' && qty > c.stock) continue;
+    c.stock = mode==='in' ? c.stock + qty : c.stock - qty;
+    c.updatedAt = now;
+    const t = {id:uid(), componentId:c.id, type:mode, qty, balanceAfter:c.stock,
+      note:`BOM${mode==='in'?T('note.bomin'):T('note.bomout')} ${bomFileName}${bomMult>1?' ×'+bomMult+T('sets'):''}`, time:now};
+    await dbPut('components', c);
+    await dbPut('transactions', t);
+    transactions.push(t);
+    done++;
+  }
+  renderTree(); renderStats(); renderList(); renderStock(); renderLogs(); renderBom();
+  toast(TF('bom.done', word, done, skipped>0?TF('bom.skipped', skipped):''),'ok');
+}
+$('bomInBtn').addEventListener('click',()=>bomApply('in'));
+$('bomOutBtn').addEventListener('click',()=>bomApply('out'));
+
+/* ================= 视图切换 ================= */
+const VIEW_TITLE_KEYS = {overview:'nav.overview', stockin:'nav.stockin', stockout:'nav.stockout', logs:'nav.logs', bom:'nav.bom', cats:'nav.cats'};
+function switchView(v){
+  view = v;
+  document.querySelectorAll('.nav-btn').forEach(x=>x.classList.toggle('active', x.dataset.view===v));
+  $('pageTitle').textContent = T(VIEW_TITLE_KEYS[v]);
+  $('statsRow').style.display = v==='overview' ? '' : 'none';
+  $('listPanel').hidden = v!=='overview';
+  $('stockPanel').hidden = !(v==='stockin'||v==='stockout');
+  $('logPanel').hidden = v!=='logs';
+  $('catPanel').hidden = v!=='cats';
+  $('bomPanel').hidden = v!=='bom';
+  if(v==='stockin'||v==='stockout') renderStock();
+  if(v==='logs') renderLogs();
+  if(v==='cats') renderCats();
+  if(v==='bom') renderBom();
+}
+document.querySelectorAll('.nav-btn').forEach(b=>b.addEventListener('click',()=>switchView(b.dataset.view)));
+
+/* ================= 入库 / 出库 操作 ================= */
+async function doStock(id, qtyEl, noteEl){
+  const c = components.find(x=>x.id===id);
+  if(!c) return;
+  const mode = view==='stockin' ? 'in' : 'out';
+  const qty = parseInt(qtyEl.value);
+  if(!qty || qty<=0){ toast(T('qty.invalid'),'err'); qtyEl.focus(); return; }
+  if(mode==='out' && qty > c.stock){ toast(TF('qty.exceed', fmtNum(c.stock)),'err'); qtyEl.focus(); return; }
+  c.stock = mode==='in' ? c.stock + qty : c.stock - qty;
+  c.updatedAt = Date.now();
+  const t = {id:uid(), componentId:c.id, type:mode, qty, balanceAfter:c.stock, note:noteEl.value.trim(), time:Date.now()};
+  await dbPut('components', c);
+  await dbPut('transactions', t);
+  transactions.push(t);
+  qtyEl.value = ''; noteEl.value = '';
+  renderTree(); renderStats(); renderList(); renderLogs();
+  // 只更新当前行库存进度条，保持筛选与滚动位置
+  const tr = qtyEl.closest('tr');
+  tr.querySelector('.stock-cell').innerHTML = stockBarHTML(c);
+  tr.classList.add('flash'); setTimeout(()=>tr.classList.remove('flash'), 900);
+  toast(TF('stock.done', mode==='in'?T('word.in'):T('word.out'), c.name, fmtNum(c.stock)),'ok');
+}
+$('stockTbody').addEventListener('click', e=>{
+  const b = e.target.closest('button,img.thumb');
+  if(!b) return;
+  if(b.dataset.do){
+    const tr = b.closest('tr');
+    doStock(b.dataset.do, tr.querySelector('[data-qty]'), tr.querySelector('[data-note]'));
+  }else if(b.dataset.big){
+    const c = components.find(x=>x.id===b.dataset.big);
+    if(c && c.image){ $('bigImg').src = c.image; $('bigView').classList.add('show'); }
+  }
+});
+$('stockTbody').addEventListener('keydown', e=>{
+  if(e.key==='Enter' && e.target.matches('[data-qty],[data-note]')){
+    const tr = e.target.closest('tr');
+    const btn = tr.querySelector('[data-do]');
+    doStock(btn.dataset.do, tr.querySelector('[data-qty]'), tr.querySelector('[data-note]'));
+  }
+});
+$('siParent').addEventListener('change', e=>{ siParent = e.target.value; siChild=''; renderStock(); });
+$('siChild').addEventListener('change', e=>{ siChild = e.target.value; renderStock(); });
+$('siPkg').addEventListener('change', e=>{ siPkg = e.target.value; renderStock(); });
+$('siSearch').addEventListener('input', e=>{ siSearch = e.target.value.trim(); renderStock(); });
+
+/* 总览页行内：跳转到出入库页并定位 */
+function jumpToStock(id, v){
+  const c = components.find(x=>x.id===id);
+  if(!c) return;
+  siParent = c.parent; siChild = c.child; siSearch = ''; siPkg = '';
+  $('siSearch').value = '';
+  switchView(v);
+  pendingFocusId = id;
+  renderStock();
+}
+
+/* ================= 总览列表行内操作 ================= */
+$('compTbody').addEventListener('click', async e=>{
+  const b = e.target.closest('button,img.thumb');
+  if(!b) return;
+  if(b.dataset.in) jumpToStock(b.dataset.in,'stockin');
+  else if(b.dataset.out) jumpToStock(b.dataset.out,'stockout');
+  else if(b.dataset.edit) openEditModal(b.dataset.edit);
+  else if(b.dataset.ds){
+    const c = components.find(x=>x.id===b.dataset.ds);
+    if(c && c.datasheet) openDatasheet(c.datasheet);
+  }
+  else if(b.dataset.del){
+    const c = components.find(x=>x.id===b.dataset.del);
+    if(!c) return;
+    if(!confirm(TF('comp.del.confirm', c.name))) return;
+    await dbDel('components', c.id);
+    components = components.filter(x=>x.id!==c.id);
+    renderAll(); toast(T('comp.deleted.toast'),'ok');
+  }
+  else if(b.dataset.big){
+    const c = components.find(x=>x.id===b.dataset.big);
+    if(c && c.image){ $('bigImg').src = c.image; $('bigView').classList.add('show'); }
+  }
+});
+$('bigView').addEventListener('click',()=>$('bigView').classList.remove('show'));
+
+/* ================= 弹窗控制 ================= */
+function showMask(id){ $(id).classList.add('show'); }
+function hideMask(id){ $(id).classList.remove('show'); }
+document.querySelectorAll('[data-close]').forEach(b=>b.addEventListener('click',()=>hideMask(b.dataset.close)));
+document.querySelectorAll('.modal-mask').forEach(m=>m.addEventListener('click',e=>{ if(e.target===m) m.classList.remove('show'); }));
+
+/* ================= 新增 / 编辑元器件 ================= */
+function fillParentSelect(sel){
+  const p = $('fParent');
+  const keys = Object.keys(CATEGORIES);
+  if(sel && !keys.includes(sel)) keys.unshift(sel);
+  p.innerHTML = keys.map(k=>`<option ${k===sel?'selected':''}>${esc(k)}</option>`).join('');
+  fillChildSelect(p.value, null);
+}
+function fillChildSelect(parent, sel){
+  const arr = [...(CATEGORIES[parent]||[])];
+  if(sel && !arr.includes(sel)) arr.unshift(sel);
+  $('fChild').innerHTML = arr.map(k=>`<option ${k===sel?'selected':''}>${esc(k)}</option>`).join('');
+}
+$('fParent').addEventListener('change', ()=>fillChildSelect($('fParent').value, null));
+
+function setPreviewImg(dataUrl){
+  const pv = $('imgPreview');
+  pv.innerHTML = dataUrl ? `<img src="${dataUrl}">` : `<div class="ph">${T('m.imgph')}</div>`;
+  $('removeImgBtn').hidden = !dataUrl;
+}
+function openEditModal(id){
+  editingId = id || null;
+  const c = id ? components.find(x=>x.id===id) : null;
+  $('editTitle').textContent = c ? T('m.edit') : T('m.add');
+  $('fName').value = c?.name||''; $('fModel').value = c?.model||'';
+  $('fBrand').value = c?.brand||''; $('fPackage').value = c?.package||'';
+  $('fStock').value = c ? c.stock : 0; $('fMinStock').value = c ? c.minStock : 10;
+  $('fLocation').value = c?.location||''; $('fPrice').value = c?.price??'';
+  $('fSupplier').value = c?.supplier||''; $('fDesc').value = c?.description||'';
+  $('fStock').disabled = !!c;
+  fillParentSelect(c?.parent);
+  if(c) fillChildSelect(c.parent, c.child);
+  editingImage = c?.image || null;
+  setPreviewImg(editingImage);
+  editingDatasheet = c?.datasheet || null;
+  setDsUI();
+  showMask('editMask');
+}
+async function handleImageFile(file){
+  try{ editingImage = await processImage(file); setPreviewImg(editingImage); }
+  catch(e){ toast(e.message||T('err.imgfail'),'err'); }
+}
+$('pickImgBtn').addEventListener('click',()=>$('imgInput').click());
+$('imgPreview').addEventListener('click',()=>$('imgInput').click());
+$('imgInput').addEventListener('change',e=>{ if(e.target.files[0]) handleImageFile(e.target.files[0]); e.target.value=''; });
+$('imgPreview').addEventListener('dragover',e=>{e.preventDefault();e.stopPropagation();});
+$('imgPreview').addEventListener('drop',e=>{e.preventDefault(); if(e.dataTransfer.files[0]) handleImageFile(e.dataTransfer.files[0]);});
+$('removeImgBtn').addEventListener('click',e=>{e.stopPropagation(); editingImage=null; setPreviewImg(null);});
+
+/* ================= 数据手册 ================= */
+const fmtSize = n => n>=1048576 ? (n/1048576).toFixed(1)+' MB' : Math.max(1,Math.round(n/1024))+' KB';
+function setDsUI(){
+  const ds = editingDatasheet;
+  $('dsName').textContent = ds ? `${ds.name}（${fmtSize(ds.size)}）` : T('ds.none');
+  $('openDsBtn').hidden = !ds;
+  $('removeDsBtn').hidden = !ds;
+}
+function dataUrlToBlob(du){
+  const i = du.indexOf(',');
+  const mime = (du.slice(0,i).match(/data:(.*?);/)||[])[1] || 'application/octet-stream';
+  const bin = atob(du.slice(i+1));
+  const arr = new Uint8Array(bin.length);
+  for(let j=0;j<bin.length;j++) arr[j]=bin.charCodeAt(j);
+  return new Blob([arr],{type:mime});
+}
+function openDatasheet(ds){
+  const url = URL.createObjectURL(dataUrlToBlob(ds.dataUrl));
+  const w = window.open(url,'_blank');
+  if(!w){ // 弹窗被拦截则改为下载
+    const a=document.createElement('a'); a.href=url; a.download=ds.name; a.click();
+  }
+  setTimeout(()=>URL.revokeObjectURL(url), 60000);
+}
+$('pickDsBtn').addEventListener('click',()=>$('dsInput').click());
+$('dsInput').addEventListener('change', e=>{
+  const f = e.target.files[0]; e.target.value='';
+  if(!f) return;
+  if(f.size > 20*1048576) return toast(T('ds.toobig'),'err');
+  const reader = new FileReader();
+  reader.onload = ev=>{
+    editingDatasheet = {name:f.name, size:f.size, dataUrl:ev.target.result};
+    setDsUI(); toast(T('ds.ready'),'ok');
+  };
+  reader.onerror = ()=>toast(T('ds.readfail'),'err');
+  reader.readAsDataURL(f);
+});
+$('openDsBtn').addEventListener('click',()=>{ if(editingDatasheet) openDatasheet(editingDatasheet); });
+$('removeDsBtn').addEventListener('click',()=>{ editingDatasheet=null; setDsUI(); });
+
+$('saveCompBtn').addEventListener('click', async ()=>{
+  const name = $('fName').value.trim();
+  if(!name) return toast(T('m.name.req'),'err');
+  const now = Date.now();
+  const old = editingId ? components.find(x=>x.id===editingId) : null;
+  const c = {
+    id: editingId || uid(),
+    name, model: $('fModel').value.trim(),
+    parent: $('fParent').value, child: $('fChild').value,
+    brand: $('fBrand').value.trim(), package: $('fPackage').value.trim(),
+    stock: old ? old.stock : Math.max(0, parseInt($('fStock').value)||0),
+    minStock: Math.max(0, parseInt($('fMinStock').value)||0),
+    location: $('fLocation').value.trim(),
+    price: parseFloat($('fPrice').value)||0,
+    supplier: $('fSupplier').value.trim(),
+    description: $('fDesc').value.trim(),
+    image: editingImage,
+    datasheet: editingDatasheet,
+    createdAt: old ? old.createdAt : now, updatedAt: now
+  };
+  await dbPut('components', c);
+  const idx = components.findIndex(x=>x.id===c.id);
+  if(idx>=0) components[idx]=c; else components.push(c);
+  if(!old && c.stock>0){
+    const t = {id:uid(), componentId:c.id, type:'in', qty:c.stock, balanceAfter:c.stock, note:T('note.init'), time:now};
+    await dbPut('transactions', t); transactions.push(t);
+  }
+  hideMask('editMask'); renderAll();
+  toast(old ? T('m.saved') : T('m.added'),'ok');
+});
+
+/* ================= 总览页 搜索/排序 ================= */
+$('searchInput').addEventListener('input', e=>{ searchTerm = e.target.value.trim(); renderList(); });
+$('sortSelect').addEventListener('change', e=>{ sortMode = e.target.value; renderList(); });
+$('pkgFilter').addEventListener('change', e=>{ pkgFilter = e.target.value; renderList(); });
+$('logFilter').addEventListener('change', e=>{ logFilter = e.target.value; renderLogs(); });
+$('addBtn').addEventListener('click',()=>openEditModal(null));
+
+/* ================= 导入 / 导出 ================= */
+$('exportBtn').addEventListener('click',()=>{
+  const data = JSON.stringify({version:1, exportedAt:Date.now(), categories:CATEGORIES, components, transactions});
+  const blob = new Blob([data], {type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `${T('backup.name')}_${new Date().toISOString().slice(0,10)}.json`;
+  a.click();
+  URL.revokeObjectURL(a.href);
+  toast(T('backup.done'),'ok');
+});
+$('importBtn').addEventListener('click',()=>$('importFile').click());
+$('importFile').addEventListener('change', async e=>{
+  const f = e.target.files[0]; e.target.value='';
+  if(!f) return;
+  try{
+    const data = JSON.parse(await f.text());
+    if(!Array.isArray(data.components)) throw new Error(T('imp.badformat'));
+    if(!confirm(TF('imp.confirm', data.components.length, (data.transactions||[]).length))) return;
+    await dbClear('components'); await dbClear('transactions');
+    for(const c of data.components) await dbPut('components', c);
+    for(const t of (data.transactions||[])) await dbPut('transactions', t);
+    if(data.categories && typeof data.categories==='object' && !Array.isArray(data.categories) && Object.keys(data.categories).length){
+      CATEGORIES = data.categories; saveCategories();
+    }
+    components = data.components; transactions = data.transactions||[];
+    renderAll(); toast(T('imp.done'),'ok');
+  }catch(err){ toast(T('imp.fail')+err.message,'err'); }
+});
+
+/* ================= 初始化 ================= */
+(async function init(){
+  document.documentElement.dataset.theme = THEME;
+  _db = await openDB();
+  components = await dbAll('components');
+  transactions = await dbAll('transactions');
+  await seedDemo();
+  applyLang();
+})();
+</script>
+</body>
+</html>
