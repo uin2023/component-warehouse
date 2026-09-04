@@ -1,0 +1,15 @@
+{
+  "name": "rcl-studio",
+  "version": "1.0.0",
+  "description": "RCL Studio - Component Warehouse Manager",
+  "main": "main.js",
+  "author": "uin2023",
+  "license": "MIT",
+  "scripts": {
+    "start": "electron ."
+  },
+  "devDependencies": {
+    "@electron/packager": "^20.3.0",
+    "electron": "^44.1.1"
+  }
+}

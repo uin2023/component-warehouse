@@ -33,8 +33,9 @@
 | --- | --- | --- |
 | 浏览器（任意系统） | `index.html` | 双击用 Chrome / Edge / Safari 打开即可 |
 | macOS | `release/RCL-Studio-macOS.zip` | 解压后双击 `RCL Studio.app` |
-| Windows | `release/RCL-Studio-Windows.zip` | 解压后双击 `RCL Studio.bat` |
+| Windows | `release/RCL-Studio-Windows.zip` | 解压后双击 `RCL Studio.exe` |
 
+> 桌面版基于 Electron 打包，内嵌完整运行时（无需安装任何环境），数据保存在应用专属的本地目录中，与浏览器互不影响。
 > macOS 如提示"无法打开"，请在 系统设置 → 隐私与安全性 中点击"仍要打开"，或执行 `xattr -dr com.apple.quarantine "RCL Studio.app"`。
 
 首次打开自带 70+ 个演示元件，方便体验；清除浏览器站点数据即可重置。
@@ -80,8 +81,9 @@
 | --- | --- | --- |
 | Browser (any OS) | `index.html` | Double-click to open in Chrome / Edge / Safari |
 | macOS | `release/RCL-Studio-macOS.zip` | Unzip and double-click `RCL Studio.app` |
-| Windows | `release/RCL-Studio-Windows.zip` | Unzip and double-click `RCL Studio.bat` |
+| Windows | `release/RCL-Studio-Windows.zip` | Unzip and double-click `RCL Studio.exe` |
 
+> The desktop builds are packaged with Electron and embed a full runtime (nothing to install). Data is stored in the app's own local directory, separate from your browser.
 > On macOS, if the app is blocked, go to System Settings → Privacy & Security → "Open Anyway", or run `xattr -dr com.apple.quarantine "RCL Studio.app"`.
 
 Seeded with 70+ demo components on first launch; clear site data to reset.

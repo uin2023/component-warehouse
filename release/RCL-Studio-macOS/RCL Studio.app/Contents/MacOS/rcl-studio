@@ -1,7 +1,0 @@
-#!/bin/bash
-# RCL Studio 启动器：用默认浏览器打开内置的仓库系统页面（失败时回退 Safari/Chrome/Edge）
-HTML="$(cd "$(dirname "$0")/../Resources" && pwd)/index.html"
-open "$HTML" 2>/dev/null \
-  || open -a "Safari" "$HTML" 2>/dev/null \
-  || open -a "Google Chrome" "$HTML" 2>/dev/null \
-  || open -a "Microsoft Edge" "$HTML"
