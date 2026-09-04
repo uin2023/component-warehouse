@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>元器件仓库管理系统</title>
+<title>RCL Studio</title>
 <style>
 :root{
   --bg:#0a0e14; --panel:#10151d; --panel2:#151b25; --input:#0d121a;
@@ -225,7 +225,7 @@ tr.flash td{background:var(--accent-soft)}
   <aside id="sidebar">
     <div class="logo">
       <div class="bolt">⚡</div>
-      <div><b data-i18n="app.name">元器件仓库</b><small data-i18n="app.sub">Component Warehouse</small></div>
+      <div><b data-i18n="app.name">RCL Studio</b><small data-i18n="app.sub">元器件仓库管理系统</small></div>
     </div>
     <nav class="nav">
       <button class="nav-btn active" data-view="overview" data-i18n="nav.overview">元器件总览</button>
@@ -569,9 +569,9 @@ function processImage(file){
 let LANG = localStorage.getItem('cw_lang') || 'zh';
 let THEME = localStorage.getItem('cw_theme') || 'dark';
 const I18N = {
-  'app.title':['元器件仓库管理系统','Component Warehouse Manager'],
-  'app.name':['元器件仓库','Component Warehouse'],
-  'app.sub':['Component Warehouse','Inventory System'],
+  'app.title':['RCL Studio','RCL Studio'],
+  'app.name':['RCL Studio','RCL Studio'],
+  'app.sub':['元器件仓库管理系统','Component Warehouse Manager'],
   'nav.overview':['元器件总览','Overview'],
   'nav.stockin':['入库管理','Stock In'],
   'nav.stockout':['出库管理','Stock Out'],

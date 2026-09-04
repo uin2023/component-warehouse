@@ -1,4 +1,4 @@
-# 元器件仓库管理系统 (Component Warehouse)
+# RCL Studio — 元器件仓库管理系统 (Component Warehouse Manager)
 
 一个**纯前端、零依赖、单文件**的电子元器件库存管理系统，面向电子爱好者与硬件工程师。
 无需安装、无需联网、无需后端 —— 下载 `index.html` 双击即用。
