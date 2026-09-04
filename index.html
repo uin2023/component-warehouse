@@ -17,6 +17,7 @@
   --accent-hover:#3d7ef0; --scroll:#232d3b;
   --mask:rgba(4,7,12,.72); --mask-view:rgba(0,0,0,.85);
   --ph-bg:#151b25; --ph-text:#0a0e14;
+  --chev:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='13' height='9' viewBox='0 0 13 9'><path d='M1.5 1.5l5 5 5-5' fill='none' stroke='%237d8898' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/></svg>");
   --radius:16px;
   --r-xs:7px; --r-sm:10px; --r-md:12px; --r-lg:16px; --r-xl:22px; --r-pill:999px;
 }
@@ -32,6 +33,7 @@
   --accent-hover:#1f5fd0; --scroll:#c2ccd9;
   --mask:rgba(35,45,60,.45); --mask-view:rgba(20,26,35,.82);
   --ph-bg:#e3e9f1; --ph-text:#ffffff;
+  --chev:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='13' height='9' viewBox='0 0 13 9'><path d='M1.5 1.5l5 5 5-5' fill='none' stroke='%235d6b7e' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/></svg>");
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%}
@@ -65,6 +67,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei
 .cat-child:hover{color:var(--text);background:var(--panel2)}
 .cat-child.active{color:var(--accent);background:var(--accent-soft)}
 .cat-child .cnt{margin-left:auto;font-size:12px;color:var(--faint)}
+
+/* ===== 下拉框统一外观 ===== */
+select{appearance:none;-webkit-appearance:none;background-image:var(--chev);background-repeat:no-repeat;background-position:right 14px center;background-size:13px;padding-right:38px !important}
+select::-ms-expand{display:none}
 
 /* ===== 主区域 ===== */
 main{flex:1;min-width:0;display:flex;flex-direction:column}
@@ -100,7 +106,7 @@ main{flex:1;min-width:0;display:flex;flex-direction:column}
 .panel-head{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;flex-wrap:wrap}
 .panel-head h2{font-size:14px;font-weight:600;letter-spacing:.5px}
 .crumb{color:var(--muted);font-size:13px}
-.panel-head select,.filter-bar select{border:1px solid var(--border-strong);border-radius:var(--r-md);background:var(--input);color:var(--text);padding:0 36px 0 14px;font-size:14px;outline:none;height:44px;min-width:130px}
+.panel-head select,.filter-bar select{border:1px solid var(--border-strong);border-radius:var(--r-md);background-color:var(--input);color:var(--text);padding:0 36px 0 14px;font-size:14px;outline:none;height:44px;min-width:130px}
 .panel-head select:focus,.filter-bar select:focus{border-color:var(--accent)}
 .search-inline{position:relative}
 .search-inline input{width:270px;padding:0 14px;border:1px solid var(--border-strong);border-radius:var(--r-md);background:var(--input);color:var(--text);font-size:14px;outline:none;height:44px}
@@ -189,7 +195,7 @@ tr.flash td{background:var(--accent-soft)}
 .form-grid .full{grid-column:1/-1}
 .field label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px}
 .field label .req{color:var(--red)}
-.field input,.field select,.field textarea{width:100%;padding:10px 13px;border:1px solid var(--border-strong);border-radius:var(--r-md);font-size:14px;outline:none;background:var(--input);color:var(--text);transition:border-color .12s;font-family:inherit}
+.field input,.field select,.field textarea{width:100%;padding:10px 13px;border:1px solid var(--border-strong);border-radius:var(--r-md);font-size:14px;outline:none;background-color:var(--input);color:var(--text);transition:border-color .12s;font-family:inherit}
 .field input,.field select{height:44px;padding:0 13px}
 .field input:focus,.field select:focus,.field textarea:focus{border-color:var(--accent)}
 .field textarea{resize:vertical;min-height:56px}
