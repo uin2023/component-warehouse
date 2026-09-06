@@ -40,6 +40,17 @@
 
 首次打开自带 70+ 个演示元件，方便体验；清除浏览器站点数据即可重置。
 
+### 部署到 NAS（飞牛 fnOS / 群晖 / 任意 Docker 主机）
+
+仓库自带 `Dockerfile`、`docker-compose.yml` 和 `deploy/nginx.conf`（nginx 静态托管，镜像极小）：
+
+1. 在 NAS 上新建文件夹（如 `docker/rcl-studio`），把 `Dockerfile`、`docker-compose.yml`、`index.html`、`deploy/nginx.conf` 按原目录结构放进去；
+2. fnOS 打开 **Docker → Compose → 添加项目**，选中该目录（或直接粘贴 `docker-compose.yml` 内容）并启动；
+3. 浏览器访问 `http://NAS的IP:8360` 即可（端口冲突时改 compose 里的 `8360`）。
+
+> NAS 能顺畅访问 GitHub 时也可以零上传：把 compose 里的 `build: .` 改成 `build: https://github.com/uin2023/component-warehouse.git#main`。
+> 数据仍保存在访问者浏览器的 IndexedDB 中，NAS 只负责托管页面，无需挂载数据卷。
+
 ### 截图
 
 | 元器件总览 | 入库管理 |
@@ -87,6 +98,17 @@
 > On macOS, if the app is blocked, go to System Settings → Privacy & Security → "Open Anyway", or run `xattr -dr com.apple.quarantine "RCL Studio.app"`.
 
 Seeded with 70+ demo components on first launch; clear site data to reset.
+
+### Deploy to a NAS (fnOS / Synology / any Docker host)
+
+The repo ships with a `Dockerfile`, `docker-compose.yml` and `deploy/nginx.conf` (tiny nginx static hosting):
+
+1. Create a folder on your NAS (e.g. `docker/rcl-studio`) and place `Dockerfile`, `docker-compose.yml`, `index.html` and `deploy/nginx.conf` inside, keeping the directory structure;
+2. In fnOS go to **Docker → Compose → Add project**, pick that folder (or paste the compose file) and start it;
+3. Open `http://NAS-IP:8360` in your browser (change `8360` in the compose file if the port is taken).
+
+> If your NAS can reach GitHub smoothly, you can skip uploading entirely: replace `build: .` with `build: https://github.com/uin2023/component-warehouse.git#main`.
+> Data still lives in each visitor's browser IndexedDB — the NAS only serves the page, no volume needed.
 
 ### Data Storage
 
