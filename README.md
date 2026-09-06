@@ -42,14 +42,18 @@
 
 ### 部署到 NAS（飞牛 fnOS / 群晖 / 任意 Docker 主机）
 
-仓库自带 `Dockerfile`、`docker-compose.yml` 和 `deploy/nginx.conf`（nginx 静态托管，镜像极小）：
+**数据完全保存在 NAS 上**：所有访问者共享同一份库存（含元器件图片、数据手册、出入库流水），并自动定期备份。仓库自带 `Dockerfile`、`docker-compose.yml` 和零依赖的 `server.js`（页面 + 数据 API + 定期备份一体）：
 
-1. 在 NAS 上新建文件夹（如 `docker/rcl-studio`），把 `Dockerfile`、`docker-compose.yml`、`index.html`、`deploy/nginx.conf` 按原目录结构放进去；
+1. 在 NAS 上新建文件夹（如 `docker/rcl-studio`），把 `Dockerfile`、`docker-compose.yml`、`index.html`、`server.js` 这 4 个文件放进去；
 2. fnOS 打开 **Docker → Compose → 添加项目**，选中该目录（或直接粘贴 `docker-compose.yml` 内容）并启动；
 3. 浏览器访问 `http://NAS的IP:8360` 即可（端口冲突时改 compose 里的 `8360`）。
 
+- **数据位置**：项目目录下的 `data/db.json`（可用 fnOS 文件管理直接查看），升级/重建容器不会丢数据；
+- **自动备份**：默认每 24 小时备份到 `data/backups/`，保留最近 14 份（compose 里的 `BACKUP_INTERVAL_HOURS` / `BACKUP_KEEP` 可调）；顶栏「导出」也可随时手动下载完整备份；
+- **迁移旧数据**：如果之前在浏览器版 / 桌面版里录过库存，先在旧版本顶栏「导出」JSON，再到 NAS 版顶栏「导入」即可（图片和数据手册会一并迁移）；
+- 顶栏出现绿色「NAS 集中存储」徽标即表示数据正保存在 NAS 上；用 `file://` 直接双击打开时则自动使用浏览器本地存储。
+
 > NAS 能顺畅访问 GitHub 时也可以零上传：把 compose 里的 `build: .` 改成 `build: https://github.com/uin2023/component-warehouse.git#main`。
-> 数据仍保存在访问者浏览器的 IndexedDB 中，NAS 只负责托管页面，无需挂载数据卷。
 
 ### 截图
 
@@ -101,14 +105,18 @@ Seeded with 70+ demo components on first launch; clear site data to reset.
 
 ### Deploy to a NAS (fnOS / Synology / any Docker host)
 
-The repo ships with a `Dockerfile`, `docker-compose.yml` and `deploy/nginx.conf` (tiny nginx static hosting):
+**All data lives on the NAS**: every visitor shares the same inventory — including component photos, datasheets and transaction history — with automatic scheduled backups. The repo ships with a `Dockerfile`, `docker-compose.yml` and a zero-dependency `server.js` (web UI + data API + backups in one):
 
-1. Create a folder on your NAS (e.g. `docker/rcl-studio`) and place `Dockerfile`, `docker-compose.yml`, `index.html` and `deploy/nginx.conf` inside, keeping the directory structure;
+1. Create a folder on your NAS (e.g. `docker/rcl-studio`) and place these 4 files inside: `Dockerfile`, `docker-compose.yml`, `index.html`, `server.js`;
 2. In fnOS go to **Docker → Compose → Add project**, pick that folder (or paste the compose file) and start it;
 3. Open `http://NAS-IP:8360` in your browser (change `8360` in the compose file if the port is taken).
 
+- **Data location**: `data/db.json` inside the project folder (visible in the fnOS file manager); rebuilding the container never touches your data;
+- **Automatic backups**: every 24 hours into `data/backups/`, keeping the latest 14 (tune `BACKUP_INTERVAL_HOURS` / `BACKUP_KEEP` in the compose file); the top-bar "Export" button downloads a full backup anytime;
+- **Migrating existing data**: if you previously used the browser/desktop version, use **Export** there, then **Import** in the NAS version — photos and datasheets are carried over too;
+- A green "NAS storage" badge in the top bar confirms data is being saved on the NAS; opening `index.html` directly via `file://` automatically falls back to browser-local storage.
+
 > If your NAS can reach GitHub smoothly, you can skip uploading entirely: replace `build: .` with `build: https://github.com/uin2023/component-warehouse.git#main`.
-> Data still lives in each visitor's browser IndexedDB — the NAS only serves the page, no volume needed.
 
 ### Data Storage
 

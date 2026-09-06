@@ -216,6 +216,7 @@ tr.flash td{background:var(--accent-soft)}
 .big-view.show{display:flex}
 .big-view img{max-width:88vw;max-height:88vh;border-radius:var(--r-lg)}
 
+.nas-badge{font-size:12.5px;color:var(--green);border:1px solid var(--green);padding:4px 12px;border-radius:var(--r-pill);white-space:nowrap;margin-left:12px}
 .toast-wrap{position:fixed;top:20px;left:50%;transform:translateX(-50%);z-index:300;display:flex;flex-direction:column;gap:8px;align-items:center}
 .toast{padding:10px 20px;border-radius:var(--r-md);background:var(--panel2);border:1px solid var(--border-strong);color:var(--text);font-size:13px;animation:pop .2s ease}
 .toast.err{border-color:var(--red);color:var(--red)}
@@ -247,6 +248,7 @@ tr.flash td{background:var(--accent-soft)}
   <main>
     <div class="topbar">
       <h1 id="pageTitle">元器件总览</h1>
+      <span class="nas-badge" id="nasBadge" hidden data-i18n="top.nas">NAS 集中存储</span>
       <div class="spacer"></div>
       <button class="btn" id="themeBtn">日间</button>
       <button class="btn" id="langBtn">EN</button>
@@ -496,11 +498,15 @@ function loadCategories(){
   }catch(e){}
   return JSON.parse(JSON.stringify(DEFAULT_CATEGORIES));
 }
-function saveCategories(){ localStorage.setItem('cw_categories', JSON.stringify(CATEGORIES)); }
+function saveCategories(){
+  localStorage.setItem('cw_categories', JSON.stringify(CATEGORIES));
+  if(BACKEND) apiSend('PUT','/api/categories', CATEGORIES).catch(()=>{});
+}
 let CATEGORIES = loadCategories();
 
-/* ================= IndexedDB 存储层 ================= */
+/* ================= 存储层：NAS 服务端优先，本地 IndexedDB 兜底 ================= */
 let _db = null;
+let BACKEND = false;   // true = 数据集中保存在 NAS 服务端；false = 本地 IndexedDB
 function openDB(){
   return new Promise((resolve,reject)=>{
     const req = indexedDB.open('component-warehouse', 1);
@@ -513,22 +519,47 @@ function openDB(){
     req.onerror = ()=>reject(req.error);
   });
 }
-const dbAll = store => new Promise((res,rej)=>{
-  const r = _db.transaction(store).objectStore(store).getAll();
-  r.onsuccess = ()=>res(r.result||[]); r.onerror = ()=>rej(r.error);
-});
-const dbPut = (store,val)=> new Promise((res,rej)=>{
-  const t=_db.transaction(store,'readwrite'); t.objectStore(store).put(val);
-  t.oncomplete=res; t.onerror=()=>rej(t.error);
-});
-const dbDel = (store,key)=> new Promise((res,rej)=>{
-  const t=_db.transaction(store,'readwrite'); t.objectStore(store).delete(key);
-  t.oncomplete=res; t.onerror=()=>rej(t.error);
-});
-const dbClear = store=> new Promise((res,rej)=>{
-  const t=_db.transaction(store,'readwrite'); t.objectStore(store).clear();
-  t.oncomplete=res; t.onerror=()=>rej(t.error);
-});
+async function apiDetect(){
+  try{
+    const r = await fetch('/api/state', {cache:'no-store'});
+    if(!r.ok) return null;
+    const j = await r.json();
+    return (j && Array.isArray(j.components)) ? j : null;
+  }catch(e){ return null; }
+}
+async function apiSend(method, url, body){
+  const r = await fetch(url, {
+    method,
+    headers: body!==undefined ? {'Content-Type':'application/json'} : undefined,
+    body: body!==undefined ? JSON.stringify(body) : undefined
+  });
+  if(!r.ok) throw new Error('server '+r.status);
+  return r.json().catch(()=>({}));
+}
+const dbAll = store => BACKEND
+  ? Promise.resolve(store==='components' ? components : transactions)
+  : new Promise((res,rej)=>{
+      const r = _db.transaction(store).objectStore(store).getAll();
+      r.onsuccess = ()=>res(r.result||[]); r.onerror = ()=>rej(r.error);
+    });
+const dbPut = (store,val)=> BACKEND
+  ? apiSend('PUT', `/api/${store}/${encodeURIComponent(val.id)}`, val)
+  : new Promise((res,rej)=>{
+      const t=_db.transaction(store,'readwrite'); t.objectStore(store).put(val);
+      t.oncomplete=res; t.onerror=()=>rej(t.error);
+    });
+const dbDel = (store,key)=> BACKEND
+  ? apiSend('DELETE', `/api/${store}/${encodeURIComponent(key)}`)
+  : new Promise((res,rej)=>{
+      const t=_db.transaction(store,'readwrite'); t.objectStore(store).delete(key);
+      t.oncomplete=res; t.onerror=()=>rej(t.error);
+    });
+const dbClear = store=> BACKEND
+  ? apiSend('DELETE', `/api/${store}`)
+  : new Promise((res,rej)=>{
+      const t=_db.transaction(store,'readwrite'); t.objectStore(store).clear();
+      t.oncomplete=res; t.onerror=()=>rej(t.error);
+    });
 
 /* ================= 全局状态 ================= */
 let components = [], transactions = [];
@@ -607,6 +638,7 @@ const I18N = {
   'top.import':['导入','Import'],
   'top.export':['导出','Export'],
   'top.add':['＋ 新增元器件','+ Add Component'],
+  'top.nas':['NAS 集中存储','NAS storage'],
   'stat.types':['元器件型号数','Component Types'],
   'stat.stock':['库存总数量','Total Stock'],
   'stat.value':['库存总价值','Stock Value'],
@@ -1896,6 +1928,15 @@ $('importFile').addEventListener('change', async e=>{
     const data = JSON.parse(await f.text());
     if(!Array.isArray(data.components)) throw new Error(T('imp.badformat'));
     if(!confirm(TF('imp.confirm', data.components.length, (data.transactions||[]).length))) return;
+    if(BACKEND){
+      await apiSend('POST','/api/import', {version:1, categories:data.categories||null, components:data.components, transactions:data.transactions||[]});
+      if(data.categories && typeof data.categories==='object' && !Array.isArray(data.categories) && Object.keys(data.categories).length){
+        CATEGORIES = data.categories; localStorage.setItem('cw_categories', JSON.stringify(CATEGORIES));
+      }
+      components = data.components; transactions = data.transactions||[];
+      renderAll(); toast(T('imp.done'),'ok');
+      return;
+    }
     await dbClear('components'); await dbClear('transactions');
     for(const c of data.components) await dbPut('components', c);
     for(const t of (data.transactions||[])) await dbPut('transactions', t);
@@ -1910,9 +1951,21 @@ $('importFile').addEventListener('change', async e=>{
 /* ================= 初始化 ================= */
 (async function init(){
   document.documentElement.dataset.theme = THEME;
-  _db = await openDB();
-  components = await dbAll('components');
-  transactions = await dbAll('transactions');
+  const state = await apiDetect();
+  if(state){
+    BACKEND = true;
+    components = state.components||[];
+    transactions = state.transactions||[];
+    if(state.categories && typeof state.categories==='object' && !Array.isArray(state.categories) && Object.keys(state.categories).length){
+      CATEGORIES = state.categories;
+      localStorage.setItem('cw_categories', JSON.stringify(CATEGORIES));
+    }
+    $('nasBadge').hidden = false;
+  }else{
+    _db = await openDB();
+    components = await dbAll('components');
+    transactions = await dbAll('transactions');
+  }
   await seedDemo();
   applyLang();
 })();

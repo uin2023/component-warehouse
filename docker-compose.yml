@@ -1,14 +1,15 @@
 # ============================================================
-#  RCL Studio —— 电子元器件仓库管理系统
-#  飞牛 NAS（fnOS）/ 任意 Docker 主机通用
+#  RCL Studio —— 电子元器件仓库管理系统（NAS 一体化部署）
+#  页面 + 数据 + 自动备份全部运行在 NAS 上
+#  所有访问者共享同一份库存（含图片 / 数据手册）
 #
 #  用法一（推荐，国内网络最稳）：
-#    1. 在 NAS 上新建一个文件夹（如 docker/rcl-studio）
-#    2. 把本仓库的 4 个文件按原结构放进去：
+#    1. 在 NAS 上新建文件夹（如 docker/rcl-studio）
+#    2. 把本仓库的 4 个文件放进去：
 #         Dockerfile
 #         docker-compose.yml
 #         index.html
-#         deploy/nginx.conf
+#         server.js
 #    3. fnOS → Docker → Compose → 添加项目，选中该目录启动
 #    4. 浏览器访问  http://NAS的IP:8360
 #
@@ -16,6 +17,9 @@
 #    把下面的 build: . 换成：
 #      build: https://github.com/uin2023/component-warehouse.git#main
 #
+#  数据位置：本目录下的 data/ 文件夹
+#    - data/db.json        全部库存数据（可用 fnOS 文件管理直接查看）
+#    - data/backups/       自动备份（默认每 24 小时一次，保留最近 14 份）
 #  端口冲突时，把左侧 8360 改成任意空闲端口即可。
 # ============================================================
 services:
@@ -26,3 +30,8 @@ services:
     restart: unless-stopped
     ports:
       - "8360:80"
+    environment:
+      BACKUP_INTERVAL_HOURS: "24"   # 自动备份间隔（小时）
+      BACKUP_KEEP: "14"             # 保留最近几份备份
+    volumes:
+      - ./data:/app/data            # 数据与备份都保存在这里，升级/重建容器不丢数据
